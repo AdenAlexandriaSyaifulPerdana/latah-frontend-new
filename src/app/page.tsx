@@ -10,53 +10,18 @@ import {
   Trophy,
 } from "lucide-react";
 
+import { PublicNavbar } from "../components/layout/public-navbar";
+import { SiteFooter } from "../components/layout/site-footer";
 import { ROUTES } from "../lib/constants";
 import { howItWorks, landingStatsFallback } from "../data/landing-content";
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#FAFAF7]">
+      <PublicNavbar />
+
       <section className="relative overflow-hidden bg-[#0B2D4D] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,196,81,0.35),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(217,84,63,0.28),_transparent_30%)]" />
-
-        <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-          <Link href={ROUTES.home} className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5C451] text-[#0B2D4D] shadow-lg">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-lg font-bold leading-none">LATAH</p>
-              <p className="text-xs text-white/70">Lapor Aspirasi Jember</p>
-            </div>
-          </Link>
-
-          <div className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex">
-            <Link href={ROUTES.reports} className="transition hover:text-white">
-              Laporan Publik
-            </Link>
-            <Link href={ROUTES.map} className="transition hover:text-white">
-              Peta
-            </Link>
-            <Link href={ROUTES.leaderboard} className="transition hover:text-white">
-              Leaderboard
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href={ROUTES.login}
-              className="hidden rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:inline-flex"
-            >
-              Masuk
-            </Link>
-            <Link
-              href={ROUTES.register}
-              className="rounded-full bg-[#D9543F] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#c24634]"
-            >
-              Daftar
-            </Link>
-          </div>
-        </nav>
 
         <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-32 lg:pt-24">
           <div>
@@ -71,8 +36,8 @@ export default function HomePage() {
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
               LATAH membantu masyarakat Jember menyampaikan laporan secara cepat,
-              transparan, dan berbasis data melalui foto, lokasi, interaksi warga, dan
-              prioritas penanganan.
+              transparan, dan berbasis data melalui foto, lokasi, interaksi warga,
+              serta prioritas penanganan.
             </p>
 
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
@@ -106,6 +71,7 @@ export default function HomePage() {
                       Dashboard Kota
                     </h2>
                   </div>
+
                   <div className="rounded-2xl bg-[#FFF4D8] p-3 text-[#D9543F]">
                     <BarChart3 className="h-6 w-6" />
                   </div>
@@ -186,8 +152,8 @@ export default function HomePage() {
             <MapPin className="mb-5 h-8 w-8 text-[#F5C451]" />
             <h3 className="text-2xl font-black">Smart Mapping</h3>
             <p className="mt-3 text-sm leading-6 text-white/75">
-              Menampilkan sebaran laporan berdasarkan lokasi agar area prioritas lebih
-              mudah dikenali.
+              Menampilkan sebaran laporan berdasarkan lokasi agar area prioritas
+              lebih mudah dikenali.
             </p>
           </div>
 
@@ -210,6 +176,30 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-7xl rounded-[2rem] bg-[#0B2D4D] p-8 text-white md:p-12">
+          <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+            <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-[#F5C451] text-[#0B2D4D]">
+              <ShieldCheck className="h-12 w-12" />
+            </div>
+
+            <div>
+              <h2 className="font-serif text-3xl font-black md:text-5xl">
+                Transparansi pelayanan publik dimulai dari laporan yang mudah
+                dipantau.
+              </h2>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-white/70 md:text-base">
+                Dengan sistem tracking, prioritas berbasis data, peta laporan, dan
+                interaksi warga, LATAH dirancang sebagai jembatan antara masyarakat
+                dan pemerintah daerah.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 }
