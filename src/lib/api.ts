@@ -8,9 +8,17 @@ interface ApiRequestOptions extends RequestInit {
   params?: QueryParams;
 }
 
+function getBaseUrl() {
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api/backend`;
+  }
+
+  return API_BASE_URL;
+}
+
 function buildUrl(path: string, params?: QueryParams) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = new URL(`${API_BASE_URL}${normalizedPath}`);
+  const url = new URL(`${getBaseUrl()}${normalizedPath}`);
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -23,7 +31,10 @@ function buildUrl(path: string, params?: QueryParams) {
   return url.toString();
 }
 
-async function apiFetch<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
+async function apiFetch<T>(
+  path: string,
+  options: ApiRequestOptions = {},
+): Promise<T> {
   const { auth = false, params, headers, body, ...restOptions } = options;
 
   const requestHeaders = new Headers(headers);

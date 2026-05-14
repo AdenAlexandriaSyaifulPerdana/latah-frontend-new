@@ -149,7 +149,7 @@ export function MyReportsClient() {
             <ReportCard
               key={report.id}
               report={report}
-              href={`/reports/${report.id}`}
+              href={report.is_local_only ? ROUTES.citizenMyReports : `/reports/${report.id}`}
             />
           ))}
         </section>

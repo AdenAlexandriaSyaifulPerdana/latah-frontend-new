@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { api } from "../../lib/api";
+import { saveStoredMyReport } from "../../lib/my-report-storage";
 import {
   ImagePlus,
   Loader2,
@@ -66,18 +68,83 @@ function getUploadUrl(response: unknown) {
 }
 
 function getCreatedReport(response: unknown) {
-  const data =
-    typeof response === "object" &&
-    response !== null &&
-    "data" in response
-      ? (response as ApiResponse<Report>).data
-      : (response as Report);
+  const root =
+    typeof response === "object" && response !== null
+      ? (response as Record<string, unknown>)
+      : {};
 
-  if (data && typeof data === "object" && "id" in data) {
-    return data as Report;
+  const data =
+    "data" in root && typeof root.data === "object" && root.data !== null
+      ? (root.data as Record<string, unknown>)
+      : null;
+
+  const candidates = [
+    response,
+    data,
+    data?.report,
+    data?.createdReport,
+    data?.newReport,
+    data?.item,
+    data?.result,
+    root.report,
+    root.createdReport,
+    root.newReport,
+    root.item,
+    root.result,
+  ];
+
+  for (const candidate of candidates) {
+    if (
+      typeof candidate === "object" &&
+      candidate !== null &&
+      "id" in candidate
+    ) {
+      return candidate as Report;
+    }
   }
 
   return null;
+}
+
+function normalizeReportsFromResponse(response: unknown): Report[] {
+  const root =
+    typeof response === "object" && response !== null
+      ? (response as Record<string, unknown>)
+      : {};
+
+  const data = root.data;
+
+  if (Array.isArray(data)) return data as Report[];
+
+  if (typeof data === "object" && data !== null) {
+    const dataObject = data as Record<string, unknown>;
+
+    if (Array.isArray(dataObject.data)) return dataObject.data as Report[];
+    if (Array.isArray(dataObject.reports)) return dataObject.reports as Report[];
+    if (Array.isArray(dataObject.items)) return dataObject.items as Report[];
+    if (Array.isArray(dataObject.rows)) return dataObject.rows as Report[];
+  }
+
+  if (Array.isArray(response)) return response as Report[];
+
+  return [];
+}
+
+function findCreatedReportFromList(
+  reports: Report[],
+  payload: CreateReportRequest,
+) {
+  const matchedReports = reports.filter((report) => {
+    return (
+      report.title === payload.title &&
+      report.description === payload.description &&
+      report.location_name === payload.location_name
+    );
+  });
+
+  return (
+    matchedReports.sort((a, b) => Number(b.id) - Number(a.id))[0] ?? null
+  );
 }
 
 export function CreateReportForm() {
@@ -250,16 +317,49 @@ export function CreateReportForm() {
         payload.image_url = uploadedImageUrl;
       }
 
-      const response = await createReportMutation.mutateAsync(payload);
-      const createdReport = getCreatedReport(response);
+const response = await createReportMutation.mutateAsync(payload);
 
-      setSuccessMessage("Laporan berhasil dikirim.");
+let createdReport = getCreatedReport(response);
 
-      if (createdReport?.id) {
-        router.push(`/reports/${createdReport.id}`);
-      } else {
-        router.push(ROUTES.citizenMyReports);
+if (!createdReport?.id) {
+  const reportsResponse = await api.get<unknown>("/reports", {
+    auth: true,
+  });
+
+  const reports = normalizeReportsFromResponse(reportsResponse);
+  createdReport = findCreatedReportFromList(reports, payload);
+}
+
+  const reportToStore: Report = createdReport?.id
+    ? {
+        ...createdReport,
+        user_id: Number(user?.id),
       }
+    : {
+        id: Date.now(),
+        user_id: Number(user?.id),
+        category_id: payload.category_id,
+        title: payload.title,
+        description: payload.description,
+        location_name: payload.location_name,
+        address_detail: payload.address_detail,
+        latitude: payload.latitude,
+        longitude: payload.longitude,
+        status: "pending",
+        created_at: new Date().toISOString(),
+        category: selectedCategory,
+        is_local_only: true,
+      };
+
+  saveStoredMyReport(user?.id, reportToStore);
+
+  setSuccessMessage("Laporan berhasil dikirim.");
+
+  if (createdReport?.id) {
+    router.push(`/reports/${createdReport.id}`);
+  } else {
+    router.push(ROUTES.citizenMyReports);
+  }
     } catch (error) {
       const message =
         error instanceof Error

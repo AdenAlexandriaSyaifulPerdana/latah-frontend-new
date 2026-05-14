@@ -3,11 +3,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../lib/api";
+import { getStoredMyReportIds, getStoredMyReports } from "../lib/my-report-storage";
 import type { ApiResponse } from "../types/api";
 import type { Bookmark, Notification, UploadImageResult } from "../types/citizen";
+import type { UserAnalytics } from "../types/dashboard";
 import type { Comment, Vote } from "../types/interaction";
 import type { Report } from "../types/report";
-import type { UserAnalytics } from "../types/dashboard";
 
 function extractData<T>(response: ApiResponse<T> | T): T {
   if (
@@ -22,8 +23,107 @@ function extractData<T>(response: ApiResponse<T> | T): T {
   return response as T;
 }
 
-function belongsToUser(report: Report, userId: number) {
-  return report.user_id === userId || report.user?.id === userId;
+function toSafeNumber(value: unknown) {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function normalizeReports(response: unknown): Report[] {
+  const extracted = extractData<unknown>(response as ApiResponse<unknown>);
+
+  if (Array.isArray(extracted)) {
+    return extracted as Report[];
+  }
+
+  if (typeof extracted === "object" && extracted !== null) {
+    const objectData = extracted as Record<string, unknown>;
+
+    if (Array.isArray(objectData.data)) return objectData.data as Report[];
+    if (Array.isArray(objectData.reports)) return objectData.reports as Report[];
+    if (Array.isArray(objectData.items)) return objectData.items as Report[];
+    if (Array.isArray(objectData.rows)) return objectData.rows as Report[];
+    if (Array.isArray(objectData.result)) return objectData.result as Report[];
+  }
+
+  return [];
+}
+
+function getNestedId(value: unknown) {
+  if (typeof value !== "object" || value === null) return null;
+
+  const objectValue = value as Record<string, unknown>;
+
+  if ("id" in objectValue) return toSafeNumber(objectValue.id);
+  if ("user_id" in objectValue) return toSafeNumber(objectValue.user_id);
+
+  return null;
+}
+
+function getReportOwnerId(report: Report) {
+  const reportRecord = report as Record<string, unknown>;
+
+  const possibleDirectFields = [
+    "user_id",
+    "userId",
+    "created_by",
+    "createdBy",
+    "reporter_id",
+    "reporterId",
+    "citizen_id",
+    "citizenId",
+    "author_id",
+    "authorId",
+  ];
+
+  for (const field of possibleDirectFields) {
+    const value = reportRecord[field];
+
+    const directId = toSafeNumber(value);
+    if (directId !== null) return directId;
+
+    const nestedId = getNestedId(value);
+    if (nestedId !== null) return nestedId;
+  }
+
+  const possibleNestedFields = ["user", "citizen", "reporter", "author", "creator"];
+
+  for (const field of possibleNestedFields) {
+    const nestedId = getNestedId(reportRecord[field]);
+    if (nestedId !== null) return nestedId;
+  }
+
+  return null;
+}
+
+function filterReportsByCurrentUser(reports: Report[], userId: number) {
+  return reports.filter((report) => {
+    const ownerId = getReportOwnerId(report);
+    return ownerId === userId;
+  });
+}
+
+function filterReportsByStoredIds(reports: Report[], userId: number) {
+  const storedIds = getStoredMyReportIds(userId);
+
+  if (storedIds.length === 0) return [];
+
+  return reports.filter((report) => storedIds.includes(Number(report.id)));
+}
+
+function mergeReports(primaryReports: Report[], secondaryReports: Report[]) {
+  const merged = new Map<number, Report>();
+
+  [...primaryReports, ...secondaryReports].forEach((report) => {
+    const reportId = Number(report.id);
+
+    if (Number.isFinite(reportId)) {
+      merged.set(reportId, report);
+    }
+  });
+
+  return Array.from(merged.values()).sort((a, b) => {
+    return Number(b.id) - Number(a.id);
+  });
 }
 
 export function useCitizenAnalytics(userId?: number) {
@@ -51,12 +151,33 @@ export function useCitizenReports(userId?: number) {
     queryKey: ["citizen", "reports", userId],
     enabled: Boolean(userId),
     queryFn: async () => {
+      const currentUserId = Number(userId);
+
       const response = await api.get<ApiResponse<Report[]> | Report[]>("/reports", {
         auth: true,
+        params: {
+          user_id: currentUserId,
+        },
       });
 
-      const reports = extractData<Report[]>(response) ?? [];
-      return reports.filter((report) => belongsToUser(report, Number(userId)));
+      const reports = normalizeReports(response);
+      const storedReports = getStoredMyReports(currentUserId);
+
+      const filteredByOwner = filterReportsByCurrentUser(reports, currentUserId);
+      const filteredByStoredIds = filterReportsByStoredIds(reports, currentUserId);
+
+      const finalReports = mergeReports(
+        [...filteredByOwner, ...filteredByStoredIds],
+        storedReports,
+      );
+
+      console.log("ALL REPORTS RESPONSE:", response);
+      console.log("NORMALIZED REPORTS:", reports);
+      console.log("STORED MY REPORTS:", storedReports);
+      console.log("CURRENT USER ID:", currentUserId);
+      console.log("FINAL MY REPORTS:", finalReports);
+
+      return finalReports;
     },
   });
 }
@@ -132,8 +253,11 @@ export function useCreateComment(reportId?: number | string) {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reports", reportId, "comments"] });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", reportId, "comments"],
+      });
       queryClient.invalidateQueries({ queryKey: ["reports"] });
+      queryClient.invalidateQueries({ queryKey: ["citizen", "reports"] });
     },
   });
 }
@@ -148,8 +272,11 @@ export function useCreateVote(reportId?: number | string) {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reports", reportId, "votes"] });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", reportId, "votes"],
+      });
       queryClient.invalidateQueries({ queryKey: ["reports"] });
+      queryClient.invalidateQueries({ queryKey: ["citizen", "reports"] });
     },
   });
 }
@@ -164,7 +291,9 @@ export function useCreateBookmark(userId?: number) {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["citizen", "bookmarks", userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["citizen", "bookmarks", userId],
+      });
     },
   });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { useAuth } from "../../hooks/use-auth";
 
@@ -48,11 +48,16 @@ export function LoginForm() {
     setErrorMessage("");
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!form.email.trim() || !form.password.trim()) {
-      setErrorMessage("Email dan password wajib diisi.");
+    if (!form.email.trim()) {
+      setErrorMessage("Email wajib diisi.");
+      return;
+    }
+
+    if (!form.password.trim()) {
+      setErrorMessage("Password wajib diisi.");
       return;
     }
 
@@ -65,6 +70,8 @@ export function LoginForm() {
         password: form.password,
       });
     } catch (error) {
+      console.error("LOGIN ERROR:", error);
+
       const message =
         error instanceof Error
           ? error.message
@@ -102,7 +109,7 @@ export function LoginForm() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} method="post" className="space-y-5">
         <div>
           <label
             htmlFor="email"

@@ -15,7 +15,8 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setSession(authStorage.getSession());
+    const currentSession = authStorage.getSession();
+    setSession(currentSession);
     setIsLoading(false);
   }, []);
 
@@ -23,8 +24,18 @@ export function useAuth() {
     async (payload: LoginRequest) => {
       const response = await authService.login(payload);
 
-      if (!response.token || !response.user) {
-        throw new Error("Response login tidak valid.");
+      console.log("LOGIN RESPONSE:", response);
+
+      if (!response?.success) {
+        throw new Error(response?.message || "Login gagal.");
+      }
+
+      if (!response.token) {
+        throw new Error("Token tidak ditemukan pada response login.");
+      }
+
+      if (!response.user) {
+        throw new Error("Data user tidak ditemukan pada response login.");
       }
 
       const nextSession: AuthSession = {
@@ -35,7 +46,11 @@ export function useAuth() {
       authStorage.setSession(nextSession);
       setSession(nextSession);
 
-      router.push(authService.getDashboardPath(response.user.role));
+      const dashboardPath = authService.getDashboardPath(response.user.role);
+
+      console.log("REDIRECT TO:", dashboardPath);
+
+      router.replace(dashboardPath);
 
       return response;
     },
@@ -49,7 +64,7 @@ export function useAuth() {
   const logout = useCallback(() => {
     authService.logout();
     setSession(null);
-    router.push(ROUTES.login);
+    router.replace(ROUTES.login);
   }, [router]);
 
   const value = useMemo(
