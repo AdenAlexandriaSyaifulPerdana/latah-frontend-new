@@ -1,6 +1,6 @@
-import { api } from "../lib/api";
-import { ROUTES } from "../lib/constants";
-import { authStorage } from "../lib/storage";
+import { api } from "./api";
+import { ROUTES } from "./constants";
+import { authStorage } from "./storage";
 import type {
   LoginRequest,
   LoginResponse,

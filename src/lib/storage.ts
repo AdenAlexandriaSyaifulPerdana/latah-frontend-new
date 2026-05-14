@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from "../lib/constants";
+import { STORAGE_KEYS } from "./constants";
 import type { AuthSession } from "../types/auth";
 import type { User } from "../types/user";
 

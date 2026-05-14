@@ -1,5 +1,5 @@
-import { API_BASE_URL } from "../lib/constants";
-import { authStorage } from "../lib/storage";
+import { API_BASE_URL } from "./constants";
+import { authStorage } from "./storage";
 
 type QueryParams = Record<string, string | number | boolean | null | undefined>;
 
