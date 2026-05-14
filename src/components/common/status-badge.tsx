@@ -1,5 +1,5 @@
 import { getStatusMeta } from "../../lib/constants";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 interface StatusBadgeProps {
   status?: string;
