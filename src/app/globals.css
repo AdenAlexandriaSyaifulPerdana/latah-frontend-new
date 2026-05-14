@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --latah-navy: #0b2d4d;
   --latah-deep-blue: #123c69;

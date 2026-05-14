@@ -1,11 +1,20 @@
 import type { User } from "./user";
 
+export interface InteractionUser {
+  id: number;
+  name: string;
+  email?: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
 export interface Comment {
   id: number;
   user_id?: number;
   report_id?: number;
   comment: string;
   user?: User;
+  users?: InteractionUser;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
@@ -15,7 +24,9 @@ export interface Vote {
   id: number;
   user_id?: number;
   report_id?: number;
+  vote_type?: string;
   user?: User;
+  users?: InteractionUser;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

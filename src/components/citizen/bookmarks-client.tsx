@@ -13,6 +13,7 @@ import type { Report } from "../../types/report";
 
 function getBookmarkReport(bookmark: BookmarkType) {
   if (bookmark.report) return bookmark.report;
+  if (bookmark.reports) return bookmark.reports;
 
   if ("title" in bookmark && "description" in bookmark) {
     return bookmark as unknown as Report;
@@ -23,8 +24,13 @@ function getBookmarkReport(bookmark: BookmarkType) {
 
 export function BookmarksClient() {
   const { user } = useAuth();
-  const { data: bookmarks = [], isLoading, isError, error } =
-    useCitizenBookmarks(user?.id);
+
+  const {
+    data: bookmarks = [],
+    isLoading,
+    isError,
+    error,
+  } = useCitizenBookmarks(user?.id);
 
   return (
     <div className="space-y-8">

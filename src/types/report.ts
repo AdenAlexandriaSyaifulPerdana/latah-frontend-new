@@ -71,6 +71,17 @@ export interface Report {
   votes_count?: number;
   comment_count?: number;
   comments_count?: number;
+  
+  comments?: {
+    id: number;
+    [key: string]: unknown;
+  }[];
+
+  votes?: {
+    id: number;
+    vote_type?: string;
+    [key: string]: unknown;
+  }[];
 
   created_at?: string;
   updated_at?: string;

@@ -5,6 +5,7 @@ export interface Bookmark {
   user_id?: number;
   report_id?: number;
   report?: Report;
+  reports?: Report;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

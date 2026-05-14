@@ -17,12 +17,24 @@ import { useReportDetail } from "../../hooks/use-reports";
 import { useReportComments, useReportVotes } from "../../hooks/use-public-data";
 import { ROUTES } from "../../lib/constants";
 import { formatDateTime, getInitials, toNumber } from "../../lib/utils";
+import type { Comment, Vote } from "../../types/interaction";
 import type { Report } from "../../types/report";
+import { ReportInteractionPanel } from "./report-interaction-panel";
 
-function getCategoryName(category: Report["category"]) {
-  if (!category) return "Umum";
-  if (typeof category === "string") return category;
-  return category.name;
+function getCategoryName(report: Report) {
+  if (report.report_categories?.name) {
+    return report.report_categories.name;
+  }
+
+  if (!report.category) {
+    return "Umum";
+  }
+
+  if (typeof report.category === "string") {
+    return report.category;
+  }
+
+  return report.category.name;
 }
 
 function getImageUrl(report: Report) {
@@ -36,7 +48,32 @@ function getImageUrl(report: Report) {
   }
 
   return "";
-  
+}
+
+function getReportComments(report: Report): Comment[] {
+  const reportRecord = report as Record<string, unknown>;
+  const comments = reportRecord.comments;
+
+  if (Array.isArray(comments)) {
+    return comments as Comment[];
+  }
+
+  return [];
+}
+
+function getReportVotes(report: Report): Vote[] {
+  const reportRecord = report as Record<string, unknown>;
+  const votes = reportRecord.votes;
+
+  if (Array.isArray(votes)) {
+    return votes as Vote[];
+  }
+
+  return [];
+}
+
+function getCommentUserName(comment: Comment) {
+  return comment.user?.name || comment.users?.name || "Warga";
 }
 
 export function ReportDetailClient() {
@@ -51,8 +88,8 @@ export function ReportDetailClient() {
     error,
   } = useReportDetail(reportId);
 
-  const { data: comments = [] } = useReportComments(reportId);
-  const { data: votes = [] } = useReportVotes(reportId);
+  const { data: commentsFromEndpoint = [] } = useReportComments(reportId);
+  const { data: votesFromEndpoint = [] } = useReportVotes(reportId);
 
   if (isLoading) {
     return (
@@ -86,9 +123,18 @@ export function ReportDetailClient() {
     );
   }
 
-  const imageUrl = getImageUrl(report);
   const latitude = toNumber(report.latitude, 0);
   const longitude = toNumber(report.longitude, 0);
+  const imageUrl = getImageUrl(report);
+
+  const commentsFromDetail = getReportComments(report);
+  const votesFromDetail = getReportVotes(report);
+
+  const comments =
+    commentsFromEndpoint.length > 0 ? commentsFromEndpoint : commentsFromDetail;
+
+  const votes = votesFromEndpoint.length > 0 ? votesFromEndpoint : votesFromDetail;
+
   const voteCount = report.vote_count ?? report.votes_count ?? votes.length;
   const commentCount =
     report.comment_count ?? report.comments_count ?? comments.length;
@@ -126,7 +172,7 @@ export function ReportDetailClient() {
           <div className="p-6 md:p-8">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-[#FFF4D8] px-3 py-1 text-xs font-bold text-[#D9543F]">
-                {getCategoryName(report.category)}
+                {getCategoryName(report)}
               </span>
 
               {report.urgency_level ? (
@@ -232,6 +278,8 @@ export function ReportDetailClient() {
         </aside>
       </section>
 
+      <ReportInteractionPanel reportId={report.id} />
+
       <section className="rounded-[2rem] bg-white p-6 shadow-sm md:p-8">
         <h2 className="text-2xl font-black text-[#0B2D4D]">Komentar Warga</h2>
         <p className="mt-2 text-sm text-slate-500">
@@ -252,12 +300,12 @@ export function ReportDetailClient() {
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF4D8] text-sm font-black text-[#D9543F]">
-                    {getInitials(comment.user?.name)}
+                    {getInitials(getCommentUserName(comment))}
                   </div>
 
                   <div>
                     <p className="text-sm font-black text-[#0B2D4D]">
-                      {comment.user?.name || "Warga"}
+                      {getCommentUserName(comment)}
                     </p>
                     <p className="text-xs text-slate-500">
                       {formatDateTime(comment.created_at)}
@@ -271,11 +319,6 @@ export function ReportDetailClient() {
               </article>
             ))
           )}
-        </div>
-
-        <div className="mt-6 rounded-2xl bg-[#FFF4D8] p-5 text-sm leading-7 text-[#0B2D4D]">
-          Untuk memberi komentar atau upvote, pengguna perlu login sebagai citizen.
-          Fitur interaksi aktif akan dibuat pada dashboard citizen di part berikutnya.
         </div>
       </section>
     </div>

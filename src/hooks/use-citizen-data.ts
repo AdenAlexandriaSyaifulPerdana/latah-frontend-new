@@ -216,7 +216,7 @@ export function useCitizenBookmarks(userId?: number) {
         {
           auth: true,
           params: {
-            user_id: userId,
+            user_id: Number(userId),
           },
         },
       );
@@ -263,6 +263,9 @@ export function useCreateComment(reportId?: number | string) {
       queryClient.invalidateQueries({
         queryKey: ["reports", reportId, "comments"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", reportId],
+      });
       queryClient.invalidateQueries({ queryKey: ["reports"] });
       queryClient.invalidateQueries({ queryKey: ["citizen", "reports"] });
     },
@@ -281,6 +284,9 @@ export function useCreateVote(reportId?: number | string) {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["reports", reportId, "votes"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", reportId],
       });
       queryClient.invalidateQueries({ queryKey: ["reports"] });
       queryClient.invalidateQueries({ queryKey: ["citizen", "reports"] });

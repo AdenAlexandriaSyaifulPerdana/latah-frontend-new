@@ -41,8 +41,17 @@ function getImageUrl(report: Report) {
 
 export function ReportCard({ report, href }: ReportCardProps) {
   const detailHref = href ?? `/reports/${report.id}`;
-  const voteCount = report.vote_count ?? report.votes_count ?? 0;
-  const commentCount = report.comment_count ?? report.comments_count ?? 0;
+  const voteCount =
+  report.vote_count ??
+  report.votes_count ??
+  report.votes?.length ??
+  0;
+
+  const commentCount =
+    report.comment_count ??
+    report.comments_count ??
+    report.comments?.length ??
+    0;
   const imageUrl = getImageUrl(report);
 
   return (
