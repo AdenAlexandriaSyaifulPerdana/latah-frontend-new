@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { LogOut, Menu, ShieldCheck } from "lucide-react";
 
-import { getInitials } from "@/lib/utils";
-import { useAuth } from "@/hooks/use-auth";
-import type { UserRole } from "@/types/user";
+import { getInitials } from "../../lib/utils";
+import { useAuth } from "../../hooks/use-auth";
+import type { UserRole } from "../../types/user";
 
 interface DashboardTopbarProps {
   role: UserRole;

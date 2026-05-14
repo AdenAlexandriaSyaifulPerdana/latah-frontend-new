@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Mail, MapPin, ShieldCheck } from "lucide-react";
 
-import { publicNavLinks } from "@/data/nav-links";
-import { ROUTES } from "@/lib/constants";
+import { publicNavLinks } from "../../data/nav-links";
+import { ROUTES } from "../../lib/constants";
 
 export function SiteFooter() {
   return (
