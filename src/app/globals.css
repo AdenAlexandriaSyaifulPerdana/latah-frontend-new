@@ -1,0 +1,25 @@
+:root {
+  --latah-navy: #0b2d4d;
+  --latah-deep-blue: #123c69;
+  --latah-coral: #d9543f;
+  --latah-yellow: #f5c451;
+  --latah-cream: #fff4d8;
+  --latah-soft-white: #fafaf7;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.font-serif {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+::selection {
+  background: var(--latah-yellow);
+  color: var(--latah-navy);
+}
