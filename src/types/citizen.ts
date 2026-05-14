@@ -1,0 +1,33 @@
+import type { Report } from "./report";
+
+export interface Bookmark {
+  id?: number;
+  user_id?: number;
+  report_id?: number;
+  report?: Report;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
+
+export interface Notification {
+  id: number;
+  user_id?: number;
+  title?: string;
+  message?: string;
+  content?: string;
+  type?: string;
+  is_read?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
+
+export interface UploadImageResult {
+  url?: string;
+  image_url?: string;
+  public_url?: string;
+  path?: string;
+  filename?: string;
+  [key: string]: unknown;
+}
