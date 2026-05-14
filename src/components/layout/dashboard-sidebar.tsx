@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { LogOut, ShieldCheck } from "lucide-react";
 
 import { adminNavLinks, citizenNavLinks } from "../../data/nav-links";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { useAuth } from "../../hooks/use-auth";
 import type { UserRole } from "../../types/user";
 
