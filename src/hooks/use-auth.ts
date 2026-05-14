@@ -23,6 +23,10 @@ export function useAuth() {
     async (payload: LoginRequest) => {
       const response = await authService.login(payload);
 
+      if (!response.token || !response.user) {
+        throw new Error("Response login tidak valid.");
+      }
+
       const nextSession: AuthSession = {
         token: response.token,
         user: response.user,
