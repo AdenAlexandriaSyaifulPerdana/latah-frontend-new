@@ -35,7 +35,10 @@ export function useReportDetail(reportId?: number | string) {
     queryKey: ["reports", reportId],
     enabled: Boolean(reportId),
     queryFn: async () => {
-      const response = await api.get<ApiResponse<Report> | Report>(`/reports/${reportId}`);
+      const response = await api.get<ApiResponse<Report> | Report>(
+        `/reports/${reportId}`,
+      );
+
       return extractData<Report>(response);
     },
   });
@@ -45,7 +48,10 @@ export function useCategories() {
   return useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await api.get<ApiResponse<Category[]> | Category[]>("/categories");
+      const response = await api.get<ApiResponse<Category[]> | Category[]>(
+        "/categories",
+      );
+
       return extractData<Category[]>(response) ?? [];
     },
   });

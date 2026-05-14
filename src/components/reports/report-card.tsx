@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CalendarDays, MapPin, MessageCircle, ThumbsUp } from "lucide-react";
 
-import { StatusBadge } from "../../components/common/status-badge";
+import { StatusBadge } from "../common/status-badge";
 import { formatDate, truncateText } from "../../lib/utils";
 import type { Report } from "../../types/report";
 
@@ -67,7 +67,9 @@ export function ReportCard({ report, href }: ReportCardProps) {
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-[#D9543F]" />
               <span className="line-clamp-1">
-                {report.location_name || report.address_detail || "Lokasi belum tersedia"}
+                {report.location_name ||
+                  report.address_detail ||
+                  "Lokasi belum tersedia"}
               </span>
             </div>
 
