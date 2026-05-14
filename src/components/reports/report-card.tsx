@@ -10,24 +10,48 @@ interface ReportCardProps {
   href?: string;
 }
 
-function getCategoryName(category: Report["category"]) {
-  if (!category) return "Umum";
-  if (typeof category === "string") return category;
-  return category.name;
+function getCategoryName(report: Report) {
+  if (report.report_categories?.name) {
+    return report.report_categories.name;
+  }
+
+  if (!report.category) {
+    return "Umum";
+  }
+
+  if (typeof report.category === "string") {
+    return report.category;
+  }
+
+  return report.category.name;
+}
+
+function getImageUrl(report: Report) {
+  if (report.image_url) return report.image_url;
+  if (report.photo_url) return report.photo_url;
+
+  const firstImage = report.report_images?.[0];
+
+  if (firstImage?.image_url) {
+    return firstImage.image_url;
+  }
+
+  return "";
 }
 
 export function ReportCard({ report, href }: ReportCardProps) {
   const detailHref = href ?? `/reports/${report.id}`;
   const voteCount = report.vote_count ?? report.votes_count ?? 0;
   const commentCount = report.comment_count ?? report.comments_count ?? 0;
+  const imageUrl = getImageUrl(report);
 
   return (
     <article className="group overflow-hidden rounded-[1.75rem] border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
       <Link href={detailHref} className="block">
         <div className="relative h-44 bg-slate-100">
-          {report.image_url || report.photo_url ? (
+          {imageUrl ? (
             <img
-              src={report.image_url || report.photo_url}
+              src={imageUrl}
               alt={report.title}
               className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             />
@@ -45,7 +69,7 @@ export function ReportCard({ report, href }: ReportCardProps) {
         <div className="p-5">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-[#FFF4D8] px-3 py-1 text-xs font-bold text-[#D9543F]">
-              {getCategoryName(report.category)}
+              {getCategoryName(report)}
             </span>
 
             {report.urgency_level ? (

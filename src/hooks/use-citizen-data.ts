@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../lib/api";
-import { getStoredMyReportIds, getStoredMyReports } from "../lib/my-report-storage";
 import type { ApiResponse } from "../types/api";
 import type { Bookmark, Notification, UploadImageResult } from "../types/citizen";
 import type { UserAnalytics } from "../types/dashboard";
@@ -23,11 +22,6 @@ function extractData<T>(response: ApiResponse<T> | T): T {
   return response as T;
 }
 
-function toSafeNumber(value: unknown) {
-  const numberValue = Number(value);
-  return Number.isFinite(numberValue) ? numberValue : null;
-}
-
 function normalizeReports(response: unknown): Report[] {
   const extracted = extractData<unknown>(response as ApiResponse<unknown>);
 
@@ -38,14 +32,33 @@ function normalizeReports(response: unknown): Report[] {
   if (typeof extracted === "object" && extracted !== null) {
     const objectData = extracted as Record<string, unknown>;
 
-    if (Array.isArray(objectData.data)) return objectData.data as Report[];
-    if (Array.isArray(objectData.reports)) return objectData.reports as Report[];
-    if (Array.isArray(objectData.items)) return objectData.items as Report[];
-    if (Array.isArray(objectData.rows)) return objectData.rows as Report[];
-    if (Array.isArray(objectData.result)) return objectData.result as Report[];
+    if (Array.isArray(objectData.data)) {
+      return objectData.data as Report[];
+    }
+
+    if (Array.isArray(objectData.reports)) {
+      return objectData.reports as Report[];
+    }
+
+    if (Array.isArray(objectData.items)) {
+      return objectData.items as Report[];
+    }
+
+    if (Array.isArray(objectData.rows)) {
+      return objectData.rows as Report[];
+    }
+
+    if (Array.isArray(objectData.result)) {
+      return objectData.result as Report[];
+    }
   }
 
   return [];
+}
+
+function toSafeNumber(value: unknown) {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
 }
 
 function getNestedId(value: unknown) {
@@ -53,8 +66,13 @@ function getNestedId(value: unknown) {
 
   const objectValue = value as Record<string, unknown>;
 
-  if ("id" in objectValue) return toSafeNumber(objectValue.id);
-  if ("user_id" in objectValue) return toSafeNumber(objectValue.user_id);
+  if ("id" in objectValue) {
+    return toSafeNumber(objectValue.id);
+  }
+
+  if ("user_id" in objectValue) {
+    return toSafeNumber(objectValue.user_id);
+  }
 
   return null;
 }
@@ -62,7 +80,7 @@ function getNestedId(value: unknown) {
 function getReportOwnerId(report: Report) {
   const reportRecord = report as Record<string, unknown>;
 
-  const possibleDirectFields = [
+  const directFields = [
     "user_id",
     "userId",
     "created_by",
@@ -75,53 +93,51 @@ function getReportOwnerId(report: Report) {
     "authorId",
   ];
 
-  for (const field of possibleDirectFields) {
+  for (const field of directFields) {
     const value = reportRecord[field];
 
     const directId = toSafeNumber(value);
-    if (directId !== null) return directId;
+
+    if (directId !== null) {
+      return directId;
+    }
 
     const nestedId = getNestedId(value);
-    if (nestedId !== null) return nestedId;
+
+    if (nestedId !== null) {
+      return nestedId;
+    }
   }
 
-  const possibleNestedFields = ["user", "citizen", "reporter", "author", "creator"];
+  const nestedFields = [
+    "user",
+    "users",
+    "citizen",
+    "reporter",
+    "author",
+    "creator",
+  ];
 
-  for (const field of possibleNestedFields) {
+  for (const field of nestedFields) {
     const nestedId = getNestedId(reportRecord[field]);
-    if (nestedId !== null) return nestedId;
+
+    if (nestedId !== null) {
+      return nestedId;
+    }
   }
 
   return null;
 }
 
-function filterReportsByCurrentUser(reports: Report[], userId: number) {
-  return reports.filter((report) => {
-    const ownerId = getReportOwnerId(report);
-    return ownerId === userId;
-  });
-}
+function sortReportsByNewest(reports: Report[]) {
+  return [...reports].sort((a, b) => {
+    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
 
-function filterReportsByStoredIds(reports: Report[], userId: number) {
-  const storedIds = getStoredMyReportIds(userId);
-
-  if (storedIds.length === 0) return [];
-
-  return reports.filter((report) => storedIds.includes(Number(report.id)));
-}
-
-function mergeReports(primaryReports: Report[], secondaryReports: Report[]) {
-  const merged = new Map<number, Report>();
-
-  [...primaryReports, ...secondaryReports].forEach((report) => {
-    const reportId = Number(report.id);
-
-    if (Number.isFinite(reportId)) {
-      merged.set(reportId, report);
+    if (dateA !== dateB) {
+      return dateB - dateA;
     }
-  });
 
-  return Array.from(merged.values()).sort((a, b) => {
     return Number(b.id) - Number(a.id);
   });
 }
@@ -155,29 +171,20 @@ export function useCitizenReports(userId?: number) {
 
       const response = await api.get<ApiResponse<Report[]> | Report[]>("/reports", {
         auth: true,
-        params: {
-          user_id: currentUserId,
-        },
       });
 
       const reports = normalizeReports(response);
-      const storedReports = getStoredMyReports(currentUserId);
 
-      const filteredByOwner = filterReportsByCurrentUser(reports, currentUserId);
-      const filteredByStoredIds = filterReportsByStoredIds(reports, currentUserId);
+      const myReports = reports.filter((report) => {
+        const ownerId = getReportOwnerId(report);
+        return ownerId === currentUserId;
+      });
 
-      const finalReports = mergeReports(
-        [...filteredByOwner, ...filteredByStoredIds],
-        storedReports,
-      );
+      console.log("USER LOGIN ID:", currentUserId);
+      console.log("REPORTS FROM BACKEND:", reports);
+      console.log("MY REPORTS FROM BACKEND:", myReports);
 
-      console.log("ALL REPORTS RESPONSE:", response);
-      console.log("NORMALIZED REPORTS:", reports);
-      console.log("STORED MY REPORTS:", storedReports);
-      console.log("CURRENT USER ID:", currentUserId);
-      console.log("FINAL MY REPORTS:", finalReports);
-
-      return finalReports;
+      return sortReportsByNewest(myReports);
     },
   });
 }

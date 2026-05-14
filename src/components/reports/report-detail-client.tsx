@@ -25,6 +25,20 @@ function getCategoryName(category: Report["category"]) {
   return category.name;
 }
 
+function getImageUrl(report: Report) {
+  if (report.image_url) return report.image_url;
+  if (report.photo_url) return report.photo_url;
+
+  const firstImage = report.report_images?.[0];
+
+  if (firstImage?.image_url) {
+    return firstImage.image_url;
+  }
+
+  return "";
+  
+}
+
 export function ReportDetailClient() {
   const params = useParams();
   const rawId = params?.id;
@@ -72,6 +86,7 @@ export function ReportDetailClient() {
     );
   }
 
+  const imageUrl = getImageUrl(report);
   const latitude = toNumber(report.latitude, 0);
   const longitude = toNumber(report.longitude, 0);
   const voteCount = report.vote_count ?? report.votes_count ?? votes.length;
@@ -91,9 +106,9 @@ export function ReportDetailClient() {
       <section className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <article className="overflow-hidden rounded-[2rem] bg-white shadow-sm">
           <div className="relative h-72 bg-slate-100 md:h-[420px]">
-            {report.image_url || report.photo_url ? (
+            {imageUrl ? (
               <img
-                src={report.image_url || report.photo_url}
+                src={imageUrl}
                 alt={report.title}
                 className="h-full w-full object-cover"
               />

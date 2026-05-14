@@ -50,20 +50,21 @@ const initialForm: FormState = {
 };
 
 function getUploadUrl(response: unknown) {
-  const data =
-    typeof response === "object" &&
-    response !== null &&
-    "data" in response
-      ? (response as ApiResponse<UploadImageResult>).data
-      : (response as UploadImageResult);
+  const root =
+    typeof response === "object" && response !== null
+      ? (response as Record<string, unknown>)
+      : {};
 
-  if (!data || typeof data !== "object") return "";
+  const data =
+    "data" in root && typeof root.data === "object" && root.data !== null
+      ? (root.data as Record<string, unknown>)
+      : root;
 
   return (
-    data.image_url ||
-    data.public_url ||
-    data.url ||
-    (typeof data.path === "string" ? data.path : "")
+    (typeof data.image_url === "string" && data.image_url) ||
+    (typeof data.public_url === "string" && data.public_url) ||
+    (typeof data.url === "string" && data.url) ||
+    ""
   );
 }
 
@@ -300,6 +301,12 @@ export function CreateReportForm() {
       if (imageFile) {
         const uploadResponse = await uploadImageMutation.mutateAsync(imageFile);
         uploadedImageUrl = getUploadUrl(uploadResponse);
+
+        if (!uploadedImageUrl) {
+          throw new Error(
+            "Gambar berhasil diproses, tetapi URL gambar tidak ditemukan dari server."
+          );
+        }
       }
 
       const payload: CreateReportRequest = {
@@ -317,7 +324,7 @@ export function CreateReportForm() {
         payload.image_url = uploadedImageUrl;
       }
 
-const response = await createReportMutation.mutateAsync(payload);
+      const response = await createReportMutation.mutateAsync(payload);
 
 let createdReport = getCreatedReport(response);
 

@@ -1,5 +1,6 @@
 import type { ReportStatus } from "../types/report";
 
+
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "LATAH";
 
 export const API_BASE_URL =
@@ -61,6 +62,11 @@ export const REPORT_STATUS_META: Record<
     description: "Laporan ditolak",
     className: "bg-red-100 text-red-700 border-red-200",
   },
+  verified: {
+    label: "Terverifikasi",
+    description: "Laporan sudah diverifikasi",
+    className: "bg-purple-100 text-purple-700 border-purple-200",
+  },
 };
 
 export const DEFAULT_JEMBER_COORDINATE = {
@@ -83,13 +89,14 @@ export function getStatusMeta(status?: string) {
     status === "pending" ||
     status === "processing" ||
     status === "resolved" ||
-    status === "rejected"
+    status === "rejected" ||
+    status === "verified"
   ) {
     return REPORT_STATUS_META[status];
   }
 
   return {
-    label: "Tidak diketahui",
+    label: status || "Tidak diketahui",
     description: "Status tidak tersedia",
     className: "bg-slate-100 text-slate-700 border-slate-200",
   };

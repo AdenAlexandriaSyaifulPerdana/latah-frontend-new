@@ -1,6 +1,11 @@
-import type { User } from "../types/user";
+import type { User } from "./user";
 
-export type ReportStatus = "pending" | "processing" | "resolved" | "rejected";
+export type ReportStatus =
+  | "pending"
+  | "processing"
+  | "resolved"
+  | "rejected"
+  | "verified";
 
 export type UrgencyLevel = "low" | "medium" | "high" | "critical" | string;
 
@@ -15,10 +20,29 @@ export interface Category {
   [key: string]: unknown;
 }
 
+export interface ReportImage {
+  id: number;
+  image_url: string;
+  report_id?: number;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
+
+export interface ReportUser {
+  id: number;
+  name: string;
+  email?: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
 export interface Report {
   id: number;
-  user_id?: number;
-  category_id?: number;
+
+  user_id?: number | string;
+  userId?: number | string;
+  category_id?: number | string;
 
   title: string;
   description: string;
@@ -28,15 +52,20 @@ export interface Report {
   latitude?: number | string | null;
   longitude?: number | string | null;
 
-  status?: ReportStatus;
+  status?: ReportStatus | string;
   urgency_level?: UrgencyLevel;
   priority_score?: number;
 
   image_url?: string;
   photo_url?: string;
 
-  category?: Category | string;
   user?: User;
+  users?: ReportUser;
+
+  category?: Category | string;
+  report_categories?: Category;
+
+  report_images?: ReportImage[];
 
   vote_count?: number;
   votes_count?: number;
