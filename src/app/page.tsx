@@ -1,311 +1,215 @@
-import React from "react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BarChart3,
+  Bell,
+  MapPin,
+  MessageCircle,
+  ShieldCheck,
+  Sparkles,
+  Trophy,
+} from "lucide-react";
 
-type NavItem = {
-  label: string;
-};
+import { ROUTES } from "../lib/constants";
+import { howItWorks, landingStatsFallback } from "../data/landing-content";
 
-type QuickItem = {
-  title: string;
-  icon: string;
-};
+export default function HomePage() {
+  return (
+    <main className="min-h-screen bg-[#FAFAF7]">
+      <section className="relative overflow-hidden bg-[#0B2D4D] text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,196,81,0.35),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(217,84,63,0.28),_transparent_30%)]" />
 
-type NewsItem = {
-  date: string;
-  title: string;
-  desc: string;
-};
-
-type AgendaItem = {
-  date: string;
-  title: string;
-  desc: string;
-};
-
-const navItems: NavItem[] = [
-  { label: "VIE MUNICIPALE" },
-  { label: "VIVRE À LEYCHERT" },
-  { label: "PATRIMOINE" },
-  { label: "SERVICES" },
-];
-
-const quickItems: QuickItem[] = [
-  { title: "Mes Démarches", icon: "📄" },
-  { title: "Numéros Utiles", icon: "☎️" },
-  { title: "Associations", icon: "👥" },
-  { title: "Portail Famille", icon: "🏠" },
-  { title: "Publications Légales", icon: "📰" },
-];
-
-const newsItems: NewsItem[] = [
-  {
-    date: "Publié le 6 mai 2025",
-    title: "Travaux sur la voirie communale",
-    desc: "Des travaux de réfection auront lieu sur certaines voies afin d’améliorer la sécurité et la circulation.",
-  },
-  {
-    date: "Publié le 3 mai 2025",
-    title: "Soirée contée à la salle des fêtes",
-    desc: "Petits et grands sont invités à une soirée conviviale autour des légendes et des histoires locales.",
-  },
-  {
-    date: "Publié le 24 avril 2025",
-    title: "Distribution de composteurs",
-    desc: "La communauté de communes organise une distribution gratuite de composteurs pour les habitants.",
-  },
-];
-
-const agendaItems: AgendaItem[] = [
-  {
-    date: "Dimanche 25 mai 2025",
-    title: "Fête du village - Édition 2025",
-    desc: "Repas champêtre, concert et animations pour célébrer l’été ensemble.",
-  },
-  {
-    date: "Dimanche 15 juin 2025",
-    title: "Randonnée découverte",
-    desc: "Sortie accompagnée pour découvrir les sentiers et les paysages environnants.",
-  },
-];
-
-export default function LandingPage() {
-  return <div>
-    <main className="mx-auto max-w-[1350px] overflow-hidden rounded-[28px] bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)]">
-        <header className="relative min-h-[760px] bg-[linear-gradient(180deg,rgba(10,18,36,0.18),rgba(10,18,36,0.18)),radial-gradient(circle_at_85%_15%,rgba(255,186,0,0.55),transparent_22%),linear-gradient(180deg,#2c4b79_0%,#5f6f8e_18%,#9fb1c8_34%,#d7b27f_56%,#f7a63a_74%,#ffefb5_100%)]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.08),transparent_25%),radial-gradient(circle_at_20%_40%,rgba(0,0,0,0.18),transparent_35%),linear-gradient(to_bottom,rgba(0,0,0,0.12),rgba(0,0,0,0.25))]" />
-
-          <div className="relative z-10 px-8 pt-6">
-            <div className="flex items-center justify-between gap-6 text-white">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/90 text-2xl text-[#d47a00]">
-                  ☀️
-                </div>
-                <div>
-                  <div className="text-xs uppercase tracking-[0.3em] text-white/80">
-                    Commune de
-                  </div>
-                  <div className="font-serif text-2xl italic font-bold">
-                    Leychert
-                  </div>
-                </div>
-              </div>
-
-              <nav className="hidden gap-10 text-sm font-medium uppercase tracking-[0.16em] lg:flex">
-                {navItems.map((item) => (
-                  <a
-                    key={item.label}
-                    href="#"
-                    className="transition hover:text-yellow-200"
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
+        <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
+          <Link href={ROUTES.home} className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5C451] text-[#0B2D4D] shadow-lg">
+              <ShieldCheck className="h-6 w-6" />
             </div>
-
-            <section className="flex min-h-[620px] flex-col items-center justify-center text-center text-white">
-              <p className="mb-3 text-sm uppercase tracking-[0.35em] text-white/80">
-                Ariège Pyrénées
-              </p>
-              <h1 className="font-serif text-7xl italic font-bold drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] md:text-8xl">
-                Leychert
-              </h1>
-              <p className="mt-4 max-w-2xl text-lg text-white/90 md:text-xl">
-                Entre montagne et tradition, bienvenue à Leychert.
-              </p>
-
-              <div className="mt-6 flex items-center gap-4">
-                {["🔍", "✉️", "📞"].map((icon) => (
-                  <button
-                    key={icon}
-                    className="grid h-11 w-11 place-items-center rounded-full bg-[#d84c42] text-lg text-white shadow-lg shadow-black/20 transition hover:scale-105"
-                  >
-                    {icon}
-                  </button>
-                ))}
-              </div>
-            </section>
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 z-20 h-32 bg-[linear-gradient(180deg,transparent_0%,transparent_40%,#fff_40%,#fff_100%)]">
-            <div className="absolute left-0 right-0 top-2 h-16 bg-[#e4b03f] [clip-path:polygon(0_45%,8%_65%,18%_82%,30%_74%,40%_84%,52%_72%,66%_86%,78%_72%,90%_80%,100%_60%,100%_100%,0_100%)]" />
-            <div className="relative mx-auto flex max-w-6xl -translate-y-6 items-start justify-between gap-4 px-6">
-              {quickItems.map((item) => (
-                <div key={item.title} className="flex flex-col items-center">
-                  <div className="grid h-20 w-20 place-items-center rounded-full border border-[#ece7e1] bg-white text-3xl shadow-[0_10px_25px_rgba(0,0,0,0.08)]">
-                    {item.icon}
-                  </div>
-                  <p className="mt-3 text-center text-sm font-medium text-slate-700">
-                    {item.title}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </header>
-
-        <section className="px-8 py-24">
-          <div className="mb-10 flex items-end justify-between gap-6">
             <div>
-              <h2 className="font-serif text-5xl italic font-bold text-slate-900">
-                Actualités
-              </h2>
-              <div className="mt-3 h-2 w-28 rounded-full bg-[#f2d28c]" />
+              <p className="text-lg font-bold leading-none">LATAH</p>
+              <p className="text-xs text-white/70">Lapor Aspirasi Jember</p>
             </div>
-            <button className="rounded-full bg-[#173559] px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white">
-              Toute l&apos;actualité
-            </button>
+          </Link>
+
+          <div className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex">
+            <Link href={ROUTES.reports} className="transition hover:text-white">
+              Laporan Publik
+            </Link>
+            <Link href={ROUTES.map} className="transition hover:text-white">
+              Peta
+            </Link>
+            <Link href={ROUTES.leaderboard} className="transition hover:text-white">
+              Leaderboard
+            </Link>
           </div>
 
-          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.95fr]">
-            <article className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(145deg,#d7c08f,#bfa46a)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
-              <div className="h-[430px] rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(0,0,0,0.18)),linear-gradient(135deg,#d4c08b_0%,#b59c61_24%,#f7e7b0_48%,#89a35b_75%,#5d7b3b_100%)]" />
-              <div className="absolute bottom-10 left-10 max-w-md rounded-[18px] bg-white p-6 shadow-xl">
-                <span className="inline-flex rounded-full bg-[#b84b3b] px-3 py-1 text-xs font-semibold text-white">
-                  Publié le 1 mai 2025
-                </span>
-                <h3 className="mt-4 text-xl font-semibold text-slate-900">
-                  Un nouveau sentier balisé au départ de Leychert
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  Le circuit “Sur les hauteurs de Leychert” est désormais accessible pour les promeneurs.
-                </p>
-                <a href="#" className="mt-4 inline-block text-sm font-semibold text-[#b84b3b]">
-                  Lire la suite
-                </a>
-              </div>
-            </article>
-
-            <div className="space-y-8">
-              {newsItems.map((item) => (
-                <div key={item.title} className="border-t border-[#d8b0a8] pt-5">
-                  <span className="inline-flex rounded-full bg-[#b84b3b] px-3 py-1 text-xs font-semibold text-white">
-                    {item.date}
-                  </span>
-                  <h3 className="mt-3 text-2xl font-semibold text-slate-900">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 max-w-lg text-sm leading-6 text-slate-600">
-                    {item.desc}
-                  </p>
-                  <a href="#" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#b84b3b]">
-                    <span className="grid h-5 w-5 place-items-center rounded-full bg-[#b84b3b] text-[11px] text-white">
-                      →
-                    </span>
-                    Lire la suite
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-8 pb-24">
-          <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
-            <div>
-              <h2 className="font-serif text-5xl italic font-bold text-slate-900">
-                Agenda
-              </h2>
-              <p className="mt-6 max-w-sm text-sm leading-7 text-slate-600">
-                Tout au long de l’année, Leychert s’anime au rythme de ses événements : fêtes locales, balades, ateliers et rencontres conviviales.
-              </p>
-              <button className="mt-6 rounded-full bg-[#173559] px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white">
-                Tous les événements
-              </button>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              {agendaItems.map((item, index) => (
-                <div
-                  key={item.title}
-                  className={`overflow-hidden rounded-[24px] bg-white shadow-[0_18px_50px_rgba(0,0,0,0.08)] ${
-                    index === 0 ? "mt-14" : ""
-                  }`}
-                >
-                  <div className="h-56 bg-[linear-gradient(180deg,rgba(0,0,0,0.05),rgba(0,0,0,0.18)),linear-gradient(135deg,#5b3a25_0%,#8d6236_40%,#f2c36e_100%)]" />
-                  <div className="p-6">
-                    <span className="inline-flex rounded-full bg-[#f0c16d] px-3 py-1 text-xs font-semibold text-slate-900">
-                      {item.date}
-                    </span>
-                    <h3 className="mt-4 text-xl font-semibold text-slate-900">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {item.desc}
-                    </p>
-                    <a href="#" className="mt-4 inline-block text-sm font-semibold text-[#b0841d]">
-                      Lire la suite
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="relative overflow-hidden px-8 py-24">
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,33,50,0.35),rgba(20,33,50,0.15)),linear-gradient(135deg,#9db0cc_0%,#566c8a_30%,#20344d_70%,#11243a_100%)]" />
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.4),transparent_20%),radial-gradient(circle_at_70%_20%,rgba(255,214,122,0.55),transparent_16%)]" />
-
-          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="text-white">
-              <h2 className="font-serif text-5xl italic font-bold">
-                Le territoire
-              </h2>
-              <p className="mt-6 max-w-2xl text-sm leading-7 text-white/85">
-                Petite commune nichée au pied de la montagne ariégeoise, Leychert séduit par son authenticité, son calme et son cadre naturel préservé.
-              </p>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/85">
-                Grâce à sa carte interactive, explorez les lieux emblématiques du village : mairie, sentiers, patrimoine local et services utiles.
-              </p>
-              <button className="mt-8 rounded-full bg-[#d84c42] px-6 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white">
-                Voir la carte interactive
-              </button>
-            </div>
-
-            <div className="relative flex justify-center">
-              <div className="h-[420px] w-[380px] rounded-[40px] bg-[radial-gradient(circle_at_40%_30%,#19395f_0%,#102b49_60%,#0d223a_100%)] shadow-[0_25px_70px_rgba(0,0,0,0.35)] [clip-path:polygon(42%_0%,56%_4%,62%_10%,68%_18%,78%_24%,84%_36%,81%_46%,86%_58%,80%_67%,70%_74%,64%_82%,60%_92%,52%_100%,44%_96%,40%_88%,34%_82%,28%_76%,22%_70%,18%_60%,14%_50%,16%_38%,20%_28%,28%_18%,34%_8%)]" />
-            </div>
-          </div>
-        </section>
-
-        <footer className="grid gap-8 bg-white px-8 py-10 md:grid-cols-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#f6d37a] text-2xl">
-              ☀️
+            <Link
+              href={ROUTES.login}
+              className="hidden rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:inline-flex"
+            >
+              Masuk
+            </Link>
+            <Link
+              href={ROUTES.register}
+              className="rounded-full bg-[#D9543F] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#c24634]"
+            >
+              Daftar
+            </Link>
+          </div>
+        </nav>
+
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-32 lg:pt-24">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/85 backdrop-blur">
+              <Sparkles className="h-4 w-4 text-[#F5C451]" />
+              Platform pelaporan kota berbasis AI
             </div>
-            <div>
-              <div className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                Commune de
-              </div>
-              <div className="font-serif text-3xl italic font-bold text-slate-900">
-                Leychert
-              </div>
+
+            <h1 className="max-w-3xl font-serif text-5xl font-black leading-tight tracking-tight md:text-7xl">
+              Laporkan Masalah Kota, Pantau Tindak Lanjutnya.
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
+              LATAH membantu masyarakat Jember menyampaikan laporan secara cepat,
+              transparan, dan berbasis data melalui foto, lokasi, interaksi warga, dan
+              prioritas penanganan.
+            </p>
+
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+              <Link
+                href={ROUTES.citizenNewReport}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5C451] px-7 py-3 text-sm font-bold text-[#0B2D4D] shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#ffd25d]"
+              >
+                Buat Laporan
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href={ROUTES.map}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Lihat Peta Laporan
+                <MapPin className="h-4 w-4" />
+              </Link>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.16em] text-slate-800">
-              Mairie de Leychert
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              54 rue de la Source,
-              <br />
-              09200 Leychert
+          <div className="relative">
+            <div className="rounded-[2rem] border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur">
+              <div className="rounded-[1.5rem] bg-white p-5 text-slate-900">
+                <div className="mb-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">
+                      Ringkasan Hari Ini
+                    </p>
+                    <h2 className="text-2xl font-black text-[#0B2D4D]">
+                      Dashboard Kota
+                    </h2>
+                  </div>
+                  <div className="rounded-2xl bg-[#FFF4D8] p-3 text-[#D9543F]">
+                    <BarChart3 className="h-6 w-6" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {landingStatsFallback.map((item) => (
+                    <div
+                      key={item.label}
+                      className="rounded-3xl border border-slate-100 bg-slate-50 p-4"
+                    >
+                      <p className="text-2xl font-black text-[#0B2D4D]">
+                        {item.value}
+                      </p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">
+                        {item.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 rounded-3xl bg-[#0B2D4D] p-5 text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-2xl bg-white/10 p-3">
+                      <Bell className="h-5 w-5 text-[#F5C451]" />
+                    </div>
+                    <div>
+                      <p className="font-bold">Status laporan transparan</p>
+                      <p className="text-sm text-white/70">
+                        Pending, diproses, selesai, atau ditolak.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute -bottom-6 -left-6 hidden rounded-3xl bg-[#D9543F] p-5 text-white shadow-xl lg:block">
+              <Trophy className="mb-3 h-7 w-7 text-[#F5C451]" />
+              <p className="text-sm font-bold">Leaderboard Warga Aktif</p>
+              <p className="text-xs text-white/75">Gamifikasi kontribusi publik</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <div className="max-w-2xl">
+          <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#D9543F]">
+            Cara Kerja
+          </p>
+          <h2 className="mt-3 font-serif text-4xl font-black text-[#0B2D4D] md:text-5xl">
+            Dari laporan warga menjadi tindakan nyata.
+          </h2>
+        </div>
+
+        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+          {howItWorks.map((item, index) => (
+            <article
+              key={item.title}
+              className="rounded-[1.75rem] border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF4D8] text-lg font-black text-[#D9543F]">
+                {index + 1}
+              </div>
+              <h3 className="text-lg font-black text-[#0B2D4D]">{item.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                {item.description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white px-6 py-16">
+        <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-3">
+          <div className="rounded-[2rem] bg-[#0B2D4D] p-8 text-white">
+            <MapPin className="mb-5 h-8 w-8 text-[#F5C451]" />
+            <h3 className="text-2xl font-black">Smart Mapping</h3>
+            <p className="mt-3 text-sm leading-6 text-white/75">
+              Menampilkan sebaran laporan berdasarkan lokasi agar area prioritas lebih
+              mudah dikenali.
             </p>
-            <p className="mt-3 text-sm text-slate-700">05 61 01 06 09</p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.16em] text-slate-800">
-              Horaires d&apos;ouverture
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Le mardi et le mercredi de 13h à 19h
-              <br />
-              Le jeudi de 13h à 18h
+          <div className="rounded-[2rem] bg-[#FFF4D8] p-8 text-[#0B2D4D]">
+            <Sparkles className="mb-5 h-8 w-8 text-[#D9543F]" />
+            <h3 className="text-2xl font-black">AI Classification</h3>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              Membantu mengklasifikasi laporan dan mendeteksi urgensi berdasarkan
+              judul serta deskripsi.
             </p>
           </div>
-        </footer>
-      </main>
-  </div>;
+
+          <div className="rounded-[2rem] bg-[#D9543F] p-8 text-white">
+            <MessageCircle className="mb-5 h-8 w-8 text-[#F5C451]" />
+            <h3 className="text-2xl font-black">Civic Interaction</h3>
+            <p className="mt-3 text-sm leading-6 text-white/75">
+              Warga dapat memberi dukungan dan komentar pada laporan publik untuk
+              memperkuat prioritas masalah.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }
