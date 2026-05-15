@@ -12,9 +12,13 @@ import type { LucideIcon } from "lucide-react";
 
 import { EmptyState } from "../common/empty-state";
 import { useAuth } from "../../hooks/use-auth";
-import { useCitizenNotifications } from "../../hooks/use-citizen-data";
 import { formatDateTime } from "../../lib/utils";
 import type { Notification } from "../../types/citizen";
+import { useEffect } from "react";
+import {
+  useCitizenNotifications,
+  useMarkNotificationsRead,
+} from "../../hooks/use-citizen-data";
 
 type NotificationStatus =
   | "pending"
@@ -116,6 +120,23 @@ export function NotificationsClient() {
     isError,
     error,
   } = useCitizenNotifications(user?.id);
+
+  const markNotificationsReadMutation = useMarkNotificationsRead(user?.id);
+
+  useEffect(() => {
+    const hasUnreadNotifications = notifications.some(
+      (notification) => notification.is_read === false,
+    );
+
+    if (
+      user?.id &&
+      notifications.length > 0 &&
+      hasUnreadNotifications &&
+      !markNotificationsReadMutation.isPending
+    ) {
+      markNotificationsReadMutation.mutate();
+    }
+  }, [user?.id, notifications, markNotificationsReadMutation]);
 
   return (
     <div className="space-y-8">

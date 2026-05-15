@@ -14,9 +14,15 @@ import type { UserRole } from "../../types/user";
 
 interface DashboardSidebarProps {
   role: UserRole;
+  variant?: "desktop" | "mobile";
+  onNavigate?: () => void;
 }
 
-export function DashboardSidebar({ role }: DashboardSidebarProps) {
+export function DashboardSidebar({
+  role,
+  variant = "desktop",
+  onNavigate,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
@@ -25,23 +31,40 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   );
 
   const unreadNotificationCount = notifications.filter(
-    (notification) => notification.is_read === true,
+    (notification) => notification.is_read === false,
   ).length;
 
   const links = role === "admin" ? adminNavLinks : citizenNavLinks;
   const roleLabel = role === "admin" ? "Admin Pemerintah" : "Warga Jember";
 
   function handleMenuClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
-    if (pathname === href) return;
+    if (pathname === href) {
+      onNavigate?.();
+      return;
+    }
 
     event.preventDefault();
+    onNavigate?.();
     window.location.href = href;
   }
 
+  const isMobile = variant === "mobile";
+
   return (
-    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-white/10 bg-[#0B2D4D] text-white lg:flex lg:flex-col">
+    <aside
+      className={cn(
+        "bg-[#0B2D4D] text-white",
+        isMobile
+          ? "flex h-full w-80 max-w-[86vw] flex-col overflow-y-auto"
+          : "sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-white/10 lg:flex lg:flex-col",
+      )}
+    >
       <div className="border-b border-white/10 p-6">
-        <Link href="/" className="flex items-center gap-3">
+        <Link
+          href="/"
+          onClick={onNavigate}
+          className="flex items-center gap-3"
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5C451] text-[#0B2D4D]">
             <ShieldCheck className="h-6 w-6" />
           </div>
@@ -77,9 +100,9 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               <Icon className="h-5 w-5" />
               <span>{item.label}</span>
 
-              {/* {showNotificationDot ? (
-                <span className="ml-auto flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
-              ) : null} */}
+              {showNotificationDot ? (
+                <span className="ml-auto h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+              ) : null}
             </Link>
           );
         })}
