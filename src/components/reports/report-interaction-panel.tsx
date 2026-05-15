@@ -54,13 +54,22 @@ export function ReportInteractionPanel({ reportId }: ReportInteractionPanelProps
 
       setMessage("Upvote berhasil diberikan.");
     } catch (error) {
-      const errorText =
-        error instanceof Error
-          ? error.message
-          : "Gagal memberi upvote pada laporan.";
+        const errorText =
+          error instanceof Error
+            ? error.message
+            : "Gagal memberi upvote pada laporan.";
 
-      setErrorMessage(errorText);
-    }
+        if (
+          errorText.toLowerCase().includes("duplicate") ||
+          errorText.includes("votes_report_id_user_id_key")
+        ) {
+          setMessage("Kamu sudah memberi upvote pada laporan ini.");
+          setErrorMessage("");
+          return;
+        }
+
+        setErrorMessage(errorText);
+      }
   }
 
   async function handleBookmark() {
