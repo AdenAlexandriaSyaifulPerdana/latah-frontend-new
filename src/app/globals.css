@@ -1,3 +1,24 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+/* Base */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #fafaf7;
+  color: #0b2d4d;
+}
+
+/* Leaflet layout fix */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  font-family: inherit;
+}
+
 /* Leaflet stacking fix */
 .latah-leaflet-map {
   position: relative;
@@ -46,4 +67,31 @@
 .latah-leaflet-map .leaflet-top,
 .latah-leaflet-map .leaflet-bottom {
   z-index: 7 !important;
+}
+
+/* Leaflet control polish */
+.latah-leaflet-map .leaflet-control-zoom {
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 12px 28px rgba(11, 45, 77, 0.16) !important;
+}
+
+.latah-leaflet-map .leaflet-control-zoom a {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  color: #0b2d4d !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 42px !important;
+}
+
+.latah-leaflet-map .leaflet-popup-content-wrapper {
+  border-radius: 1.25rem !important;
+  box-shadow: 0 18px 40px rgba(11, 45, 77, 0.18) !important;
+}
+
+.latah-leaflet-map .leaflet-popup-content {
+  margin: 1rem !important;
 }
