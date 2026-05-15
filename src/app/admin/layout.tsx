@@ -1,3 +1,4 @@
+import { ProtectedRoute } from "../../components/auth/protected-route";
 import { DashboardShell } from "../../components/layout/dashboard-shell";
 
 export default function AdminLayout({
@@ -5,5 +6,9 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardShell role="admin">{children}</DashboardShell>;
+  return (
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <DashboardShell role="admin">{children}</DashboardShell>
+    </ProtectedRoute>
+  );
 }
