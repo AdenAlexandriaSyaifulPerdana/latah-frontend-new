@@ -164,6 +164,10 @@ export function useCitizenAnalytics(userId?: number) {
 
 export function useCitizenReports(userId?: number) {
   return useQuery({
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     queryKey: ["citizen", "reports", userId],
     enabled: Boolean(userId),
     queryFn: async () => {
@@ -226,25 +230,30 @@ export function useCitizenBookmarks(userId?: number) {
   });
 }
 
-export function useCitizenNotifications(userId?: number) {
-  return useQuery({
-    queryKey: ["citizen", "notifications", userId],
-    enabled: Boolean(userId),
-    queryFn: async () => {
-      const response = await api.get<ApiResponse<Notification[]> | Notification[]>(
-        "/notifications",
-        {
-          auth: true,
-          params: {
-            user_id: userId,
+  export function useCitizenNotifications(userId?: number) {
+    return useQuery({
+      queryKey: ["citizen", "notifications", userId],
+      enabled: Boolean(userId),
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      refetchInterval: 10000,
+      queryFn: async () => {
+        const response = await api.get<ApiResponse<Notification[]> | Notification[]>(
+          "/notifications",
+          {
+            auth: true,
+            params: {
+              user_id: userId,
+            },
           },
-        },
-      );
+        );
 
-      return extractData<Notification[]>(response) ?? [];
-    },
-  });
-}
+        return extractData<Notification[]>(response) ?? [];
+      },
+    });
+  }
 
 export function useCreateComment(reportId?: number | string) {
   const queryClient = useQueryClient();

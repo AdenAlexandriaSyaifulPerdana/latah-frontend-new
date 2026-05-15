@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { type MouseEvent } from "react";
 import { LogOut, ShieldCheck } from "lucide-react";
 
 import { adminNavLinks, citizenNavLinks } from "../../data/nav-links";
@@ -19,6 +20,13 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
   const links = role === "admin" ? adminNavLinks : citizenNavLinks;
   const roleLabel = role === "admin" ? "Admin Pemerintah" : "Warga Jember";
+
+  function handleMenuClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    if (pathname === href) return;
+
+    event.preventDefault();
+    window.location.href = href;
+  }
 
   return (
     <aside className="hidden min-h-screen w-72 shrink-0 border-r border-white/10 bg-[#0B2D4D] text-white lg:flex lg:flex-col">
@@ -45,6 +53,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={(event) => handleMenuClick(event, item.href)}
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white",
                 active && "bg-white text-[#0B2D4D] shadow-lg",
