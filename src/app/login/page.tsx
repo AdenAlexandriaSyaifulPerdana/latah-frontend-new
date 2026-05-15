@@ -123,10 +123,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0B2D4D] px-6 py-12">
+    <main className="relative min-h-screen overflow-x-hidden bg-[#0B2D4D] px-5 py-6 sm:px-6 lg:flex lg:items-center lg:justify-center lg:py-12">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,196,81,0.32),_transparent_36%),radial-gradient(circle_at_bottom_left,_rgba(217,84,63,0.28),_transparent_32%)]" />
 
-      <div className="absolute left-8 top-8 z-10">
+      <div className="relative z-30 mx-auto mb-6 flex w-full max-w-6xl items-center justify-between lg:absolute lg:left-8 lg:top-8 lg:mb-0 lg:w-auto">
         <Link href="/" className="flex items-center gap-3 text-white">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5C451] text-[#0B2D4D]">
             <ShieldCheck className="h-6 w-6" />
@@ -139,7 +139,7 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      <section className="relative z-10 grid w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="relative z-20 mx-auto grid w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
         <div className="hidden bg-[#FFF4D8] p-10 lg:flex lg:flex-col lg:justify-between">
           <div>
             <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-[#0B2D4D] text-[#F5C451]">
