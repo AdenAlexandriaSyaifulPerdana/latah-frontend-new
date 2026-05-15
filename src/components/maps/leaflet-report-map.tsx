@@ -5,7 +5,7 @@ import type { Report } from "../../types/report";
 
 const LeafletReportMapInner = dynamic(
   () =>
-    import("../../components/maps/leaflet-report-map-inner").then(
+    import("./leaflet-report-map-inner").then(
       (module) => module.LeafletReportMapInner,
     ),
   {
