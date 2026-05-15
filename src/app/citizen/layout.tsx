@@ -1,3 +1,4 @@
+import { ProtectedRoute } from "../../components/auth/protected-route";
 import { DashboardShell } from "../../components/layout/dashboard-shell";
 
 export default function CitizenLayout({
@@ -5,5 +6,9 @@ export default function CitizenLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardShell role="citizen">{children}</DashboardShell>;
+  return (
+    <ProtectedRoute allowedRoles={["citizen"]}>
+      <DashboardShell role="citizen">{children}</DashboardShell>
+    </ProtectedRoute>
+  );
 }
