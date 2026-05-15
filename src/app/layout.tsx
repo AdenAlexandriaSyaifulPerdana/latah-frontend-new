@@ -17,13 +17,13 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: {
-    default: "LATAH - Lapor Aspirasi & Tata Kota Jember",
+    default: "LATAH - Lapor Aspirasi Jember",
     template: "%s | LATAH",
   },
   description:
-    "Platform pelaporan masalah kota Jember berbasis website untuk transparansi, respons cepat, dan partisipasi masyarakat.",
+    "Platform pelaporan aspirasi masyarakat Jember untuk transparansi, pemetaan masalah kota, dan tindak lanjut pemerintah.",
 };
 
 export default function RootLayout({
