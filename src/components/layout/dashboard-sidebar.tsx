@@ -25,7 +25,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   );
 
   const unreadNotificationCount = notifications.filter(
-    (notification) => notification.is_read === false,
+    (notification) => notification.is_read === true,
   ).length;
 
   const links = role === "admin" ? adminNavLinks : citizenNavLinks;
@@ -77,9 +77,9 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               <Icon className="h-5 w-5" />
               <span>{item.label}</span>
 
-              {showNotificationDot ? (
+              {/* {showNotificationDot ? (
                 <span className="ml-auto flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
-              ) : null}
+              ) : null} */}
             </Link>
           );
         })}
