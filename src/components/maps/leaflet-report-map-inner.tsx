@@ -6,7 +6,7 @@ import { FileText, MapPin } from "lucide-react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { useEffect, useMemo, useState } from "react";
 
-import { StatusBadge } from "../../components/common/status-badge";
+import { StatusBadge } from "../common/status-badge";
 import { truncateText } from "../../lib/utils";
 import type { Report } from "../../types/report";
 
