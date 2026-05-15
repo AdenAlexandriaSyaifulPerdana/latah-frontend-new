@@ -19,20 +19,31 @@ export function formatDate(value?: string | Date | null) {
   }).format(date);
 }
 
-export function formatDateTime(value?: string | Date | null) {
-  if (!value) return "-";
+function parseApiDate(date: string | Date) {
+  if (date instanceof Date) {
+    return date;
+  }
 
-  const date = typeof value === "string" ? new Date(value) : value;
+  const hasTimezone =
+    date.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(date);
 
-  if (Number.isNaN(date.getTime())) return "-";
+  return new Date(hasTimezone ? date : `${date}Z`);
+}
 
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
+export function formatDateTime(date?: string | Date | null) {
+  if (!date) return "-";
+
+  const value = parseApiDate(date);
+
+  if (Number.isNaN(value.getTime())) {
+    return "-";
+  }
+
+  return `${new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Jakarta",
+  }).format(value)} WIB`;
 }
 
 export function toNumber(value: unknown, fallback = 0) {

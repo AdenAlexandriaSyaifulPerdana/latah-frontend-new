@@ -6,8 +6,10 @@ import { type MouseEvent } from "react";
 import { LogOut, ShieldCheck } from "lucide-react";
 
 import { adminNavLinks, citizenNavLinks } from "../../data/nav-links";
-import { cn } from "../../lib/utils";
 import { useAuth } from "../../hooks/use-auth";
+import { useCitizenNotifications } from "../../hooks/use-citizen-data";
+import { ROUTES } from "../../lib/constants";
+import { cn } from "../../lib/utils";
 import type { UserRole } from "../../types/user";
 
 interface DashboardSidebarProps {
@@ -16,7 +18,15 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  const { data: notifications = [] } = useCitizenNotifications(
+    role === "citizen" ? user?.id : undefined,
+  );
+
+  const unreadNotificationCount = notifications.filter(
+    (notification) => notification.is_read === false,
+  ).length;
 
   const links = role === "admin" ? adminNavLinks : citizenNavLinks;
   const roleLabel = role === "admin" ? "Admin Pemerintah" : "Warga Jember";
@@ -29,7 +39,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   }
 
   return (
-    <aside className="hidden min-h-screen w-72 shrink-0 border-r border-white/10 bg-[#0B2D4D] text-white lg:flex lg:flex-col">
+    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-white/10 bg-[#0B2D4D] text-white lg:flex lg:flex-col">
       <div className="border-b border-white/10 p-6">
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5C451] text-[#0B2D4D]">
@@ -49,18 +59,27 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
 
+          const showNotificationDot =
+            role === "citizen" &&
+            item.href === ROUTES.citizenNotifications &&
+            unreadNotificationCount > 0;
+
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={(event) => handleMenuClick(event, item.href)}
               className={cn(
-                "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white",
+                "relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white",
                 active && "bg-white text-[#0B2D4D] shadow-lg",
               )}
             >
               <Icon className="h-5 w-5" />
-              {item.label}
+              <span>{item.label}</span>
+
+              {showNotificationDot ? (
+                <span className="ml-auto flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+              ) : null}
             </Link>
           );
         })}

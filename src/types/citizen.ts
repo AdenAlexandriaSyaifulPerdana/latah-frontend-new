@@ -14,10 +14,11 @@ export interface Bookmark {
 export interface Notification {
   id: number;
   user_id?: number;
+  report_id?: number;
+  report_status?: string;
   title?: string;
   message?: string;
   content?: string;
-  type?: string;
   is_read?: boolean;
   created_at?: string;
   updated_at?: string;
