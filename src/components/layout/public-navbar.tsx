@@ -28,7 +28,7 @@ export function PublicNavbar() {
 
           <div>
             <p className="text-lg font-black leading-none">LATAH</p>
-            <p className="text-xs text-white/70">Lapor Aspirasi Jember</p>
+            <p className="text-xs text-white/70">Lapor Pemerintah</p>
           </div>
         </Link>
 
