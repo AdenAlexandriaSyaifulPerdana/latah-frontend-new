@@ -1,3 +1,4 @@
+import "leaflet/dist/leaflet.css";
 import { ProtectedRoute } from "../../components/auth/protected-route";
 import { DashboardShell } from "../../components/layout/dashboard-shell";
 
