@@ -1,27 +1,49 @@
-@import "tailwindcss";
-
-:root {
-  --latah-navy: #0b2d4d;
-  --latah-deep-blue: #123c69;
-  --latah-coral: #d9543f;
-  --latah-yellow: #f5c451;
-  --latah-cream: #fff4d8;
-  --latah-soft-white: #fafaf7;
+/* Leaflet stacking fix */
+.latah-leaflet-map {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  overflow: hidden;
 }
 
-html {
-  scroll-behavior: smooth;
+.latah-leaflet-map .leaflet-container {
+  position: relative;
+  z-index: 0 !important;
+  height: 100%;
+  width: 100%;
+  background: #f8fafc;
 }
 
-body {
-  min-height: 100vh;
+.latah-leaflet-map .leaflet-pane {
+  z-index: 1 !important;
 }
 
-.font-serif {
-  font-family: var(--font-playfair), Georgia, serif;
+.latah-leaflet-map .leaflet-tile-pane {
+  z-index: 1 !important;
 }
 
-::selection {
-  background: var(--latah-yellow);
-  color: var(--latah-navy);
+.latah-leaflet-map .leaflet-overlay-pane {
+  z-index: 2 !important;
+}
+
+.latah-leaflet-map .leaflet-shadow-pane {
+  z-index: 3 !important;
+}
+
+.latah-leaflet-map .leaflet-marker-pane {
+  z-index: 4 !important;
+}
+
+.latah-leaflet-map .leaflet-tooltip-pane {
+  z-index: 5 !important;
+}
+
+.latah-leaflet-map .leaflet-popup-pane {
+  z-index: 6 !important;
+}
+
+.latah-leaflet-map .leaflet-control-container,
+.latah-leaflet-map .leaflet-top,
+.latah-leaflet-map .leaflet-bottom {
+  z-index: 7 !important;
 }
