@@ -1,12 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { api } from "../../lib/api";
-import { saveStoredMyReport } from "../../lib/my-report-storage";
 import {
   ImagePlus,
   Loader2,
-  MapPin,
   Send,
   Sparkles,
   UploadCloud,
@@ -21,12 +18,17 @@ import {
 } from "react";
 
 import { useAuth } from "../../hooks/use-auth";
-import { useAnalyzeText, useCategories, useCreateReport } from "../../hooks/use-reports";
+import {
+  useAnalyzeText,
+  useCategories,
+  useCreateReport,
+} from "../../hooks/use-reports";
 import { useUploadReportImage } from "../../hooks/use-citizen-data";
-import { DEFAULT_JEMBER_COORDINATE, ROUTES } from "../../lib/constants";
+import { LocationPickerMap } from "../maps/location-picker-map";
+import { api } from "../../lib/api";
+import { ROUTES } from "../../lib/constants";
+import { saveStoredMyReport } from "../../lib/my-report-storage";
 import type { AnalyzeTextResult } from "../../types/ai";
-import type { ApiResponse } from "../../types/api";
-import type { UploadImageResult } from "../../types/citizen";
 import type { CreateReportRequest, Report } from "../../types/report";
 
 interface FormState {
@@ -45,8 +47,8 @@ const initialForm: FormState = {
   category_id: "",
   location_name: "",
   address_detail: "",
-  latitude: String(DEFAULT_JEMBER_COORDINATE.latitude),
-  longitude: String(DEFAULT_JEMBER_COORDINATE.longitude),
+  latitude: "",
+  longitude: "",
 };
 
 function getUploadUrl(response: unknown) {
@@ -143,16 +145,15 @@ function findCreatedReportFromList(
     );
   });
 
-  return (
-    matchedReports.sort((a, b) => Number(b.id) - Number(a.id))[0] ?? null
-  );
+  return matchedReports.sort((a, b) => Number(b.id) - Number(a.id))[0] ?? null;
 }
 
 export function CreateReportForm() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+  const { data: categories = [], isLoading: categoriesLoading } =
+    useCategories();
 
   const createReportMutation = useCreateReport();
   const analyzeTextMutation = useAnalyzeText();
@@ -169,7 +170,9 @@ export function CreateReportForm() {
     createReportMutation.isPending || uploadImageMutation.isPending;
 
   const selectedCategory = useMemo(() => {
-    return categories.find((category) => String(category.id) === form.category_id);
+    return categories.find(
+      (category) => String(category.id) === form.category_id,
+    );
   }, [categories, form.category_id]);
 
   useEffect(() => {
@@ -234,15 +237,18 @@ export function CreateReportForm() {
     const latitude = Number(form.latitude);
     const longitude = Number(form.longitude);
 
-    if (!Number.isFinite(latitude)) return "Latitude harus berupa angka.";
-    if (!Number.isFinite(longitude)) return "Longitude harus berupa angka.";
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      return "Pilih titik lokasi laporan di peta terlebih dahulu.";
+    }
 
     return "";
   }
 
   async function handleAnalyzeText() {
     if (!form.title.trim() || !form.description.trim()) {
-      setErrorMessage("Isi judul dan deskripsi terlebih dahulu sebelum menjalankan AI.");
+      setErrorMessage(
+        "Isi judul dan deskripsi terlebih dahulu sebelum menjalankan AI.",
+      );
       return;
     }
 
@@ -261,7 +267,10 @@ export function CreateReportForm() {
         const categoryName = category.name.toLowerCase();
         const aiCategory = result.category.toLowerCase();
 
-        return categoryName.includes(aiCategory) || aiCategory.includes(categoryName);
+        return (
+          categoryName.includes(aiCategory) ||
+          aiCategory.includes(categoryName)
+        );
       });
 
       if (matchedCategory) {
@@ -296,6 +305,14 @@ export function CreateReportForm() {
       setErrorMessage("");
       setSuccessMessage("");
 
+      const latitude = Number(form.latitude);
+      const longitude = Number(form.longitude);
+
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        setErrorMessage("Pilih titik lokasi laporan di peta terlebih dahulu.");
+        return;
+      }
+
       let uploadedImageUrl = "";
 
       if (imageFile) {
@@ -304,7 +321,7 @@ export function CreateReportForm() {
 
         if (!uploadedImageUrl) {
           throw new Error(
-            "Gambar berhasil diproses, tetapi URL gambar tidak ditemukan dari server."
+            "Gambar berhasil diproses, tetapi URL gambar tidak ditemukan dari server.",
           );
         }
       }
@@ -316,8 +333,8 @@ export function CreateReportForm() {
         description: form.description.trim(),
         location_name: form.location_name.trim(),
         address_detail: form.address_detail.trim(),
-        latitude: Number(form.latitude),
-        longitude: Number(form.longitude),
+        latitude,
+        longitude,
       };
 
       if (uploadedImageUrl) {
@@ -326,47 +343,47 @@ export function CreateReportForm() {
 
       const response = await createReportMutation.mutateAsync(payload);
 
-let createdReport = getCreatedReport(response);
+      let createdReport = getCreatedReport(response);
 
-if (!createdReport?.id) {
-  const reportsResponse = await api.get<unknown>("/reports", {
-    auth: true,
-  });
+      if (!createdReport?.id) {
+        const reportsResponse = await api.get<unknown>("/reports", {
+          auth: true,
+        });
 
-  const reports = normalizeReportsFromResponse(reportsResponse);
-  createdReport = findCreatedReportFromList(reports, payload);
-}
-
-  const reportToStore: Report = createdReport?.id
-    ? {
-        ...createdReport,
-        user_id: Number(user?.id),
+        const reports = normalizeReportsFromResponse(reportsResponse);
+        createdReport = findCreatedReportFromList(reports, payload);
       }
-    : {
-        id: Date.now(),
-        user_id: Number(user?.id),
-        category_id: payload.category_id,
-        title: payload.title,
-        description: payload.description,
-        location_name: payload.location_name,
-        address_detail: payload.address_detail,
-        latitude: payload.latitude,
-        longitude: payload.longitude,
-        status: "pending",
-        created_at: new Date().toISOString(),
-        category: selectedCategory,
-        is_local_only: true,
-      };
 
-  saveStoredMyReport(user?.id, reportToStore);
+      const reportToStore: Report = createdReport?.id
+        ? {
+            ...createdReport,
+            user_id: Number(user?.id),
+          }
+        : {
+            id: Date.now(),
+            user_id: Number(user?.id),
+            category_id: payload.category_id,
+            title: payload.title,
+            description: payload.description,
+            location_name: payload.location_name,
+            address_detail: payload.address_detail,
+            latitude: payload.latitude,
+            longitude: payload.longitude,
+            status: "pending",
+            created_at: new Date().toISOString(),
+            category: selectedCategory,
+            is_local_only: true,
+          };
 
-  setSuccessMessage("Laporan berhasil dikirim.");
+      saveStoredMyReport(user?.id, reportToStore);
 
-  if (createdReport?.id) {
-    router.push(`/reports/${createdReport.id}`);
-  } else {
-    router.push(ROUTES.citizenMyReports);
-  }
+      setSuccessMessage("Laporan berhasil dikirim.");
+
+      if (createdReport?.id) {
+        router.push(`/reports/${createdReport.id}`);
+      } else {
+        router.push(ROUTES.citizenMyReports);
+      }
     } catch (error) {
       const message =
         error instanceof Error
@@ -387,12 +404,15 @@ if (!createdReport?.id) {
           Buat laporan masalah kota.
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70">
-          Unggah foto, tulis deskripsi, isi lokasi, lalu gunakan bantuan AI untuk
-          membaca kategori dan tingkat urgensi laporan.
+          Unggah foto, tulis deskripsi, pilih titik lokasi di peta, lalu gunakan
+          bantuan AI untuk membaca kategori dan tingkat urgensi laporan.
         </p>
       </section>
 
-      <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_380px]">
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-8 lg:grid-cols-[1fr_380px]"
+      >
         <section className="space-y-6 rounded-[2rem] bg-white p-6 shadow-sm md:p-8">
           <div>
             <label className="mb-2 block text-sm font-black text-[#0B2D4D]">
@@ -412,7 +432,9 @@ if (!createdReport?.id) {
             </label>
             <textarea
               value={form.description}
-              onChange={(event) => updateField("description", event.target.value)}
+              onChange={(event) =>
+                updateField("description", event.target.value)
+              }
               placeholder="Jelaskan kondisi masalah secara detail..."
               rows={6}
               className="w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-7 outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
@@ -426,7 +448,9 @@ if (!createdReport?.id) {
               </label>
               <select
                 value={form.category_id}
-                onChange={(event) => updateField("category_id", event.target.value)}
+                onChange={(event) =>
+                  updateField("category_id", event.target.value)
+                }
                 className="h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm font-semibold text-slate-600 outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
               >
                 {categoriesLoading ? (
@@ -449,7 +473,9 @@ if (!createdReport?.id) {
               </label>
               <input
                 value={form.location_name}
-                onChange={(event) => updateField("location_name", event.target.value)}
+                onChange={(event) =>
+                  updateField("location_name", event.target.value)
+                }
                 placeholder="Contoh: Pasar Tanjung"
                 className="h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
               />
@@ -462,47 +488,43 @@ if (!createdReport?.id) {
             </label>
             <input
               value={form.address_detail}
-              onChange={(event) => updateField("address_detail", event.target.value)}
+              onChange={(event) =>
+                updateField("address_detail", event.target.value)
+              }
               placeholder="Contoh: Jl. Kenanga No. 12, Jember"
               className="h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
             />
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-black text-[#0B2D4D]">
-                Latitude
-              </label>
-              <input
-                value={form.latitude}
-                onChange={(event) => updateField("latitude", event.target.value)}
-                className="h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
-              />
-            </div>
+          <div>
+            <label className="mb-3 block text-sm font-black text-[#0B2D4D]">
+              Titik Lokasi Laporan
+            </label>
 
-            <div>
-              <label className="mb-2 block text-sm font-black text-[#0B2D4D]">
-                Longitude
-              </label>
-              <input
-                value={form.longitude}
-                onChange={(event) => updateField("longitude", event.target.value)}
-                className="h-12 w-full rounded-2xl border border-slate-200 px-4 text-sm outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
-              />
-            </div>
-          </div>
+            <LocationPickerMap
+              value={{
+                latitude: form.latitude ? Number(form.latitude) : null,
+                longitude: form.longitude ? Number(form.longitude) : null,
+              }}
+              onChange={(location) => {
+                setForm((current) => ({
+                  ...current,
+                  latitude: String(location.latitude),
+                  longitude: String(location.longitude),
+                }));
 
-          <div className="rounded-2xl bg-[#FFF4D8] p-5">
-            <div className="flex items-start gap-3">
-              <MapPin className="mt-1 h-5 w-5 text-[#D9543F]" />
-              <div>
-                <p className="font-black text-[#0B2D4D]">Catatan lokasi</p>
-                <p className="mt-1 text-sm leading-6 text-slate-600">
-                  Untuk versi lomba ini, koordinat diisi manual. Nanti dapat
-                  dikembangkan menjadi pin lokasi langsung dari peta.
-                </p>
-              </div>
-            </div>
+                if (errorMessage) setErrorMessage("");
+                if (successMessage) setSuccessMessage("");
+              }}
+              onAddressChange={(address) => {
+                setForm((current) => ({
+                  ...current,
+                  address_detail: current.address_detail || address,
+                  location_name:
+                    current.location_name || address.split(",")[0] || "",
+                }));
+              }}
+            />
           </div>
         </section>
 
@@ -609,7 +631,9 @@ if (!createdReport?.id) {
           {selectedCategory ? (
             <section className="rounded-[2rem] bg-[#0B2D4D] p-6 text-white shadow-sm">
               <p className="text-sm text-white/60">Kategori terpilih</p>
-              <h3 className="mt-2 text-2xl font-black">{selectedCategory.name}</h3>
+              <h3 className="mt-2 text-2xl font-black">
+                {selectedCategory.name}
+              </h3>
             </section>
           ) : null}
 
@@ -628,7 +652,7 @@ if (!createdReport?.id) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[#D9543F] px-5 py-4 text-sm font-black text-white shadow-lg shadow-red-900/10 transition hover:bg-[#c24634] disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#D9543F] px-5 py-4 text-sm font-black text-white shadow-lg shadow-red-900/10 transition hover:bg-[#c24634] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? (
               <>
