@@ -44,7 +44,7 @@ export function CitizenDashboardClient() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.25em] text-[#F5C451]">
-              Citizen Dashboard
+              Dashboard Warga
             </p>
             <h2 className="mt-3 font-serif text-4xl font-black leading-tight md:text-5xl">
               Halo, {user?.name || "Warga Jember"}.
