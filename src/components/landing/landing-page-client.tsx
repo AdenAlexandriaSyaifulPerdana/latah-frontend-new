@@ -205,7 +205,7 @@ export function LandingPageClient() {
           <aside className="rounded-[2rem] border border-white/15 bg-white/12 p-5 shadow-2xl backdrop-blur-xl">
             <div className="rounded-[1.5rem] bg-white p-6">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-[#D9543F]">
-                Ringkasan Hari Ini
+                Ringkasan Keseluruhan
               </p>
 
               <h2 className="mt-3 text-2xl font-black text-[#0B2D4D]">
