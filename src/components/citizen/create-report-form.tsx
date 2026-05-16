@@ -518,12 +518,16 @@ export function CreateReportForm() {
                 if (successMessage) setSuccessMessage("");
               }}
               onAddressChange={(address) => {
+                const locationName = address.split(",")[0]?.trim() || "";
+
                 setForm((current) => ({
                   ...current,
-                  address_detail: current.address_detail || address,
-                  location_name:
-                    current.location_name || address.split(",")[0] || "",
+                  location_name: locationName,
+                  address_detail: address,
                 }));
+
+                if (errorMessage) setErrorMessage("");
+                if (successMessage) setSuccessMessage("");
               }}
             />
           </div>

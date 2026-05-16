@@ -62,7 +62,7 @@ export function LeafletMapPageClient() {
             Sebaran laporan warga.
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70">
-            Lihat titik laporan masyarakat menggunakan OpenStreetMap.
+            Lihat titik laporan masyarakat menggunakan map.
           </p>
         </div>
 
