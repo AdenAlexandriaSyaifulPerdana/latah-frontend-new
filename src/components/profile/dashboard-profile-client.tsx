@@ -134,11 +134,6 @@ export function DashboardProfileClient({ role }: DashboardProfileClientProps) {
             <h3 className="text-lg font-black text-red-700">
               Keluar dari akun
             </h3>
-
-            <p className="mt-2 text-sm leading-7 text-red-600/80">
-              Logout akan menghapus sesi login dari browser ini.
-            </p>
-
             <LogoutButton className="mt-5 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#D9543F] px-6 text-sm font-black text-white transition hover:bg-[#c24634]">
               <LogOut className="h-4 w-4" />
               Logout

@@ -152,9 +152,6 @@ export function LeafletReportMapInner({
     <section className="grid gap-6 lg:grid-cols-[1fr_380px]">
       <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-sm">
         <div className="border-b border-slate-100 p-5">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-[#D9543F]">
-            OpenStreetMap
-          </p>
           <h2 className="mt-2 text-2xl font-black text-[#0B2D4D]">
             {title}
           </h2>
