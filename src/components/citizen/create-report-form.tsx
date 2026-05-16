@@ -28,6 +28,7 @@ import type { AnalyzeTextResult } from "../../types/ai";
 import type { ApiResponse } from "../../types/api";
 import type { UploadImageResult } from "../../types/citizen";
 import type { CreateReportRequest, Report } from "../../types/report";
+import { LocationPickerMap } from "../maps/location-picker-map";
 
 interface FormState {
   title: string;

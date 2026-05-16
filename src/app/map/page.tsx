@@ -1,7 +1,7 @@
 import { PageHeading } from "../../components/common/page-heading";
 import { PublicNavbar } from "../../components/layout/public-navbar";
 import { SiteFooter } from "../../components/layout/site-footer";
-import { PublicMapPageClient } from "../../components/map/public-map-page-client";
+import { PublicMapPageClient } from "../../components/maps/public-map-page-client";
 
 export default function MapPage() {
   return (
