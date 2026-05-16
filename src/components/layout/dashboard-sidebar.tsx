@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { type MouseEvent } from "react";
 import { LogOut, ShieldCheck } from "lucide-react";
 
+import { LogoutButton } from "./logout-button";
 import { adminNavLinks, citizenNavLinks } from "../../data/nav-links";
 import { useAuth } from "../../hooks/use-auth";
 import { useCitizenNotifications } from "../../hooks/use-citizen-data";
@@ -14,17 +15,11 @@ import type { UserRole } from "../../types/user";
 
 interface DashboardSidebarProps {
   role: UserRole;
-  variant?: "desktop" | "mobile";
-  onNavigate?: () => void;
 }
 
-export function DashboardSidebar({
-  role,
-  variant = "desktop",
-  onNavigate,
-}: DashboardSidebarProps) {
+export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const { data: notifications = [] } = useCitizenNotifications(
     role === "citizen" ? user?.id : undefined,
@@ -38,33 +33,16 @@ export function DashboardSidebar({
   const roleLabel = role === "admin" ? "Admin Pemerintah" : "Warga Jember";
 
   function handleMenuClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
-    if (pathname === href) {
-      onNavigate?.();
-      return;
-    }
+    if (pathname === href) return;
 
     event.preventDefault();
-    onNavigate?.();
     window.location.href = href;
   }
 
-  const isMobile = variant === "mobile";
-
   return (
-    <aside
-      className={cn(
-        "bg-[#0B2D4D] text-white",
-        isMobile
-          ? "flex h-full w-80 max-w-[86vw] flex-col overflow-y-auto"
-          : "sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-white/10 lg:flex lg:flex-col",
-      )}
-    >
+    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-white/10 bg-[#0B2D4D] text-white lg:flex lg:flex-col">
       <div className="border-b border-white/10 p-6">
-        <Link
-          href="/"
-          onClick={onNavigate}
-          className="flex items-center gap-3"
-        >
+        <Link href="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5C451] text-[#0B2D4D]">
             <ShieldCheck className="h-6 w-6" />
           </div>
@@ -79,6 +57,7 @@ export function DashboardSidebar({
       <nav className="flex-1 space-y-2 p-4">
         {links.map((item) => {
           const Icon = item.icon;
+
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
 
@@ -109,14 +88,10 @@ export function DashboardSidebar({
       </nav>
 
       <div className="border-t border-white/10 p-4">
-        <button
-          type="button"
-          onClick={logout}
-          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
-        >
+        <LogoutButton className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white">
           <LogOut className="h-5 w-5" />
           Keluar
-        </button>
+        </LogoutButton>
       </div>
     </aside>
   );
