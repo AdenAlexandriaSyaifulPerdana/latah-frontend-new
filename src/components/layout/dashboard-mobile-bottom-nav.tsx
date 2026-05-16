@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type MouseEvent } from "react";
+import { type MouseEvent, useMemo } from "react";
 
 import { adminNavLinks, citizenNavLinks } from "../../data/nav-links";
 import { useAuth } from "../../hooks/use-auth";
@@ -29,7 +29,30 @@ export function DashboardMobileBottomNav({
     (notification) => notification.is_read === false,
   ).length;
 
-  const links = role === "admin" ? adminNavLinks : citizenNavLinks;
+  const links = useMemo(() => {
+    const sourceLinks = role === "admin" ? adminNavLinks : citizenNavLinks;
+
+    const mobileHrefs =
+      role === "admin"
+        ? [
+            ROUTES.adminDashboard,
+            ROUTES.adminReports,
+            ROUTES.adminAnalytics,
+            ROUTES.adminMap,
+            ROUTES.adminProfile,
+          ]
+        : [
+            ROUTES.citizenDashboard,
+            ROUTES.citizenNewReport,
+            ROUTES.citizenMyReports,
+            ROUTES.citizenNotifications,
+            ROUTES.citizenProfile,
+          ];
+
+    return mobileHrefs
+      .map((href) => sourceLinks.find((item) => item.href === href))
+      .filter(Boolean) as typeof sourceLinks;
+  }, [role]);
 
   function handleNavigate(event: MouseEvent<HTMLAnchorElement>, href: string) {
     if (pathname === href) return;

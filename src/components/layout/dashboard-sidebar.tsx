@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type MouseEvent } from "react";
-import { LogOut, ShieldCheck } from "lucide-react";
+import { ShieldCheck, Users } from "lucide-react";
 
-import { LogoutButton } from "./logout-button";
 import { adminNavLinks, citizenNavLinks } from "../../data/nav-links";
 import { useAuth } from "../../hooks/use-auth";
 import { useCitizenNotifications } from "../../hooks/use-citizen-data";
@@ -30,7 +29,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   ).length;
 
   const links = role === "admin" ? adminNavLinks : citizenNavLinks;
-  const roleLabel = role === "admin" ? "Admin Pemerintah" : "Warga Jember";
+  const roleLabel = role === "admin" ? "Admin LATAH" : "Citizen LATAH";
 
   function handleMenuClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
     if (pathname === href) return;
@@ -48,7 +47,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
           </div>
 
           <div>
-            <p className="text-xl font-black leading-none">LATAH</p>
+            <p className="text-xl font-black leading-none">Dashboard</p>
             <p className="mt-1 text-xs text-white/60">{roleLabel}</p>
           </div>
         </Link>
@@ -88,10 +87,13 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       </nav>
 
       <div className="border-t border-white/10 p-4">
-        <LogoutButton className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white">
-          <LogOut className="h-5 w-5" />
-          Keluar
-        </LogoutButton>
+        <Link
+          href={ROUTES.home}
+          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
+        >
+          <Users className="h-5 w-5" />
+          Public
+        </Link>
       </div>
     </aside>
   );
