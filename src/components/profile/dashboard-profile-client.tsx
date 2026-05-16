@@ -25,7 +25,7 @@ export function DashboardProfileClient({ role }: DashboardProfileClientProps) {
   const dashboardHref =
     role === "admin" ? ROUTES.adminDashboard : ROUTES.citizenDashboard;
 
-  const roleLabel = role === "admin" ? "Admin LATAH" : "Citizen LATAH";
+  const roleLabel = role === "admin" ? "Admin LATAH" : "Warga LATAH";
 
   return (
     <div className="space-y-8">

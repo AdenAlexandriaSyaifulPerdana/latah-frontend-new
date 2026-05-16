@@ -11,7 +11,7 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ role }: DashboardHeaderProps) {
-  const subtitle = role === "admin" ? "Admin LATAH" : "Citizen LATAH";
+  const subtitle = role === "admin" ? "Admin LATAH" : "Warga LATAH";
 
   return (
     <header className="sticky top-0 z-[120] border-b border-white/10 bg-[#0B2D4D] text-white shadow-sm lg:hidden">

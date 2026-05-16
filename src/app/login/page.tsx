@@ -156,18 +156,6 @@ export default function LoginPage() {
               Jember.
             </p>
           </div>
-
-          <div className="mt-10 rounded-[1.5rem] bg-white p-5 shadow-sm">
-            <p className="text-sm font-black text-[#0B2D4D]">Demo Akun Admin</p>
-
-            <div className="mt-4 space-y-3 text-sm text-slate-600">
-
-              <div>
-                <p>Email: admin@gmail.com</p>
-                <p>Password: 12345678</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="p-7 sm:p-10 lg:p-12">
