@@ -287,7 +287,7 @@ export default function LoginPage() {
                 href="/register"
                 className="font-black text-[#D9543F] transition hover:text-[#0B2D4D]"
               >
-                Daftar sebagai citizen
+                Daftar sebagai warga
               </Link>
             </p>
           </div>
