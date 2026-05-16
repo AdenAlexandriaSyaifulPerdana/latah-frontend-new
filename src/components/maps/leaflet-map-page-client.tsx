@@ -13,23 +13,20 @@ function extractReports(response: unknown): Report[] {
   if (Array.isArray(response)) return response as Report[];
 
   if (typeof response === "object" && response !== null) {
-    const objectData = response as Record<string, unknown>;
+    const root = response as Record<string, unknown>;
 
-    if (Array.isArray(objectData.data)) {
-      return objectData.data as Report[];
+    if (Array.isArray(root.data)) return root.data as Report[];
+
+    if (typeof root.data === "object" && root.data !== null) {
+      const data = root.data as Record<string, unknown>;
+
+      if (Array.isArray(data.data)) return data.data as Report[];
+      if (Array.isArray(data.reports)) return data.reports as Report[];
+      if (Array.isArray(data.items)) return data.items as Report[];
+      if (Array.isArray(data.rows)) return data.rows as Report[];
     }
 
-    if (
-      typeof objectData.data === "object" &&
-      objectData.data !== null &&
-      Array.isArray((objectData.data as Record<string, unknown>).data)
-    ) {
-      return (objectData.data as Record<string, unknown>).data as Report[];
-    }
-
-    if (Array.isArray(objectData.reports)) {
-      return objectData.reports as Report[];
-    }
+    if (Array.isArray(root.reports)) return root.reports as Report[];
   }
 
   return [];
@@ -46,7 +43,10 @@ export function LeafletMapPageClient() {
     staleTime: 0,
     refetchOnMount: "always",
     queryFn: async () => {
-      const response = await api.get<ApiResponse<Report[]> | Report[]>("/reports");
+      const response = await api.get<ApiResponse<Report[]> | Report[]>(
+        "/reports",
+      );
+
       return extractReports(response);
     },
   });

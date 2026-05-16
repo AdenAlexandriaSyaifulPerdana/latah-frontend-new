@@ -3,7 +3,13 @@
 import Link from "next/link";
 import L from "leaflet";
 import { FileText, MapPin } from "lucide-react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import { useEffect, useMemo, useState } from "react";
 
 import { StatusBadge } from "../common/status-badge";
@@ -33,6 +39,8 @@ function getReportPosition(report: Report): [number, number] | null {
   const lng = toNumber(report.longitude);
 
   if (lat === null || lng === null) return null;
+
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
 
   return [lat, lng];
 }
@@ -69,11 +77,42 @@ function createPinIcon(active = false) {
   });
 }
 
-function MapRecenter({ position }: { position: [number, number] }) {
+function MapFitBounds({ points }: { points: ReportPoint[] }) {
   const map = useMap();
 
   useEffect(() => {
-    map.flyTo(position, Math.max(map.getZoom(), 13), {
+    window.setTimeout(() => {
+      map.invalidateSize();
+
+      if (points.length === 0) {
+        map.setView(JEMBER_CENTER, 13);
+        return;
+      }
+
+      if (points.length === 1) {
+        map.setView(points[0].position, 14);
+        return;
+      }
+
+      const bounds = L.latLngBounds(points.map((item) => item.position));
+
+      map.fitBounds(bounds, {
+        padding: [50, 50],
+        maxZoom: 14,
+      });
+    }, 250);
+  }, [map, points]);
+
+  return null;
+}
+
+function MapFocus({ position }: { position: [number, number] | null }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!position) return;
+
+    map.flyTo(position, Math.max(map.getZoom(), 14), {
       animate: true,
       duration: 0.8,
     });
@@ -105,10 +144,9 @@ export function LeafletReportMapInner({
   }, [reports]);
 
   const activePoint =
-    reportPoints.find((item) => item.report.id === activeReportId) ??
-    reportPoints[0];
+    reportPoints.find((item) => item.report.id === activeReportId) ?? null;
 
-  const center = activePoint?.position ?? JEMBER_CENTER;
+  const previewPoint = activePoint ?? reportPoints[0] ?? null;
 
   return (
     <section className="grid gap-6 lg:grid-cols-[1fr_380px]">
@@ -127,12 +165,13 @@ export function LeafletReportMapInner({
 
         <div className="latah-leaflet-map relative z-0 h-[620px] w-full overflow-hidden">
           <MapContainer
-            center={center}
+            center={JEMBER_CENTER}
             zoom={13}
             scrollWheelZoom
             className="h-full w-full"
           >
-            <MapRecenter position={center} />
+            <MapFitBounds points={reportPoints} />
+            <MapFocus position={activePoint?.position ?? null} />
 
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -176,26 +215,32 @@ export function LeafletReportMapInner({
                 </Marker>
               );
             })}
+
+            <div className="leaflet-bottom leaflet-left">
+              <div className="leaflet-control rounded-2xl bg-[#0B2D4D]/80 px-4 py-3 text-sm font-black text-white shadow-lg backdrop-blur">
+                {reportPoints.length} titik laporan ditampilkan
+              </div>
+            </div>
           </MapContainer>
         </div>
       </div>
 
       <aside className="space-y-5">
-        {activePoint ? (
+        {previewPoint ? (
           <div className="rounded-[2rem] bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <StatusBadge status={activePoint.report.status} />
+              <StatusBadge status={previewPoint.report.status} />
               <span className="text-xs font-bold text-slate-400">
-                ID #{activePoint.report.id}
+                ID #{previewPoint.report.id}
               </span>
             </div>
 
             <h2 className="text-2xl font-black leading-tight text-[#0B2D4D]">
-              {activePoint.report.title}
+              {previewPoint.report.title}
             </h2>
 
             <p className="mt-3 text-sm leading-7 text-slate-500">
-              {truncateText(activePoint.report.description, 160)}
+              {truncateText(previewPoint.report.description, 160)}
             </p>
 
             <div className="mt-5 rounded-2xl bg-[#FFF4D8] p-4">
@@ -203,10 +248,11 @@ export function LeafletReportMapInner({
                 <MapPin className="mt-1 h-5 w-5 shrink-0 text-[#D9543F]" />
                 <div>
                   <p className="text-sm font-black text-[#0B2D4D]">
-                    {activePoint.report.location_name || "Lokasi belum tersedia"}
+                    {previewPoint.report.location_name ||
+                      "Lokasi belum tersedia"}
                   </p>
                   <p className="mt-1 text-xs leading-5 text-slate-600">
-                    {activePoint.report.address_detail ||
+                    {previewPoint.report.address_detail ||
                       "Detail alamat belum tersedia."}
                   </p>
                 </div>
@@ -214,14 +260,23 @@ export function LeafletReportMapInner({
             </div>
 
             <Link
-              href={`/reports/${activePoint.report.id}`}
+              href={`/reports/${previewPoint.report.id}`}
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0B2D4D] px-5 py-3 text-sm font-black text-white transition hover:bg-[#123C69]"
             >
               <FileText className="h-4 w-4" />
               Lihat Detail Laporan
             </Link>
           </div>
-        ) : null}
+        ) : (
+          <div className="rounded-[2rem] bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-black text-[#0B2D4D]">
+              Belum ada titik laporan
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-slate-500">
+              Laporan yang memiliki latitude dan longitude akan tampil di peta.
+            </p>
+          </div>
+        )}
 
         <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
           {reportPoints.map(({ report }) => (
@@ -229,7 +284,12 @@ export function LeafletReportMapInner({
               key={report.id}
               type="button"
               onClick={() => setActiveReportId(report.id)}
-              className="w-full rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm transition hover:border-[#F5C451]"
+              className={[
+                "w-full rounded-2xl border bg-white p-4 text-left shadow-sm transition hover:border-[#F5C451]",
+                activePoint?.report.id === report.id
+                  ? "border-[#F5C451]"
+                  : "border-slate-100",
+              ].join(" ")}
             >
               <div className="mb-2 flex items-center justify-between gap-3">
                 <StatusBadge status={report.status} />
