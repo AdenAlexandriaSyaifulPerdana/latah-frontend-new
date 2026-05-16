@@ -164,7 +164,7 @@ export default function HomePage() {
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/85 backdrop-blur">
               <Sparkles className="h-4 w-4 text-[#F5C451]" />
-              Platform pelaporan kota berbasis AI
+              Platform pelaporan masalah kota
             </div>
 
             <h1 className="max-w-3xl font-serif text-5xl font-black leading-tight tracking-tight md:text-7xl">
@@ -284,7 +284,7 @@ export default function HomePage() {
                     <div>
                       <p className="font-bold">Leaderboard Warga Aktif</p>
                       <p className="text-sm text-white/80">
-                        Gamifikasi kontribusi publik
+                        Kontribusi publik pada LATAH.
                       </p>
                     </div>
                   </div>
