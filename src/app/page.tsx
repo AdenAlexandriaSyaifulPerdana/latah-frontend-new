@@ -1,29 +1,164 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
   BarChart3,
   Bell,
+  FileText,
   MapPin,
   MessageCircle,
   ShieldCheck,
   Sparkles,
   Trophy,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 
 import { PublicNavbar } from "../components/layout/public-navbar";
 import { SiteFooter } from "../components/layout/site-footer";
+import { api } from "../lib/api";
 import { ROUTES } from "../lib/constants";
-import { howItWorks, landingStatsFallback } from "../data/landing-content";
+import { howItWorks } from "../data/landing-content";
+import type { ApiResponse } from "../types/api";
+import type { Report } from "../types/report";
+
+const heroImages = [
+  "/images/landing/hero-1.png",
+  "/images/landing/hero-2.png",
+];
+
+function extractReports(response: unknown): Report[] {
+  if (Array.isArray(response)) {
+    return response as Report[];
+  }
+
+  if (typeof response === "object" && response !== null) {
+    const root = response as Record<string, unknown>;
+
+    if (Array.isArray(root.data)) {
+      return root.data as Report[];
+    }
+
+    if (typeof root.data === "object" && root.data !== null) {
+      const data = root.data as Record<string, unknown>;
+
+      if (Array.isArray(data.data)) return data.data as Report[];
+      if (Array.isArray(data.reports)) return data.reports as Report[];
+      if (Array.isArray(data.items)) return data.items as Report[];
+      if (Array.isArray(data.rows)) return data.rows as Report[];
+    }
+
+    if (Array.isArray(root.reports)) {
+      return root.reports as Report[];
+    }
+
+    if (Array.isArray(root.items)) {
+      return root.items as Report[];
+    }
+  }
+
+  return [];
+}
+
+function getReporterId(report: Report) {
+  return report.users?.id ?? report.user?.id ?? report.user_id ?? null;
+}
+
+function isHandledReport(report: Report) {
+  const status = String(report.status || "").toLowerCase();
+
+  return status === "processing" || status === "verified";
+}
 
 export default function HomePage() {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const { data: reports = [], isLoading } = useQuery({
+    queryKey: ["landing", "reports", "summary"],
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      const response = await api.get<ApiResponse<Report[]> | Report[]>(
+        "/reports",
+      );
+
+      return extractReports(response);
+    },
+  });
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveImageIndex((current) => (current + 1) % heroImages.length);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const summary = useMemo(() => {
+    const totalReports = reports.length;
+
+    const handledReports = reports.filter((report) =>
+      isHandledReport(report),
+    ).length;
+
+    const activeCitizens = new Set(
+      reports.map((report) => getReporterId(report)).filter(Boolean),
+    ).size;
+
+    return {
+      totalReports,
+      handledReports,
+      activeCitizens,
+    };
+  }, [reports]);
+
+  const summaryItems = [
+    {
+      label: "Laporan Masuk",
+      value: isLoading ? "..." : summary.totalReports,
+      icon: FileText,
+    },
+    {
+      label: "Sedang Ditangani",
+      value: isLoading ? "..." : summary.handledReports,
+      icon: TrendingUp,
+    },
+    {
+      label: "Warga Aktif",
+      value: isLoading ? "..." : summary.activeCitizens,
+      icon: Users,
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-[#FAFAF7]">
       <PublicNavbar />
 
-      <section className="relative overflow-hidden bg-[#0B2D4D] text-white">
+      <section className="relative min-h-[calc(100vh-88px)] overflow-hidden bg-[#0B2D4D] text-white">
+        {heroImages.map((image, index) => (
+          <div
+            key={image}
+            aria-hidden="true"
+            className={[
+              "absolute inset-0 bg-cover bg-center transition-opacity duration-1000",
+              index === activeImageIndex ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+            style={{
+              backgroundImage: `url(${image})`,
+            }}
+          />
+        ))}
+
+        <div className="absolute inset-0 bg-[#0B2D4D]/78" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,196,81,0.35),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(217,84,63,0.28),_transparent_30%)]" />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-32 lg:pt-24">
+        <div className="relative z-10 mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-32 lg:pt-24">
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/85 backdrop-blur">
               <Sparkles className="h-4 w-4 text-[#F5C451]" />
@@ -35,9 +170,9 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
-              LATAH membantu masyarakat Jember menyampaikan laporan secara cepat,
-              transparan, dan berbasis data melalui foto, lokasi, interaksi warga,
-              serta prioritas penanganan.
+              LATAH membantu masyarakat Jember menyampaikan laporan secara
+              cepat, transparan, dan berbasis data melalui foto, lokasi,
+              interaksi warga, serta prioritas penanganan.
             </p>
 
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
@@ -57,6 +192,23 @@ export default function HomePage() {
                 <MapPin className="h-4 w-4" />
               </Link>
             </div>
+
+            <div className="mt-8 flex items-center gap-2">
+              {heroImages.map((image, index) => (
+                <button
+                  key={image}
+                  type="button"
+                  onClick={() => setActiveImageIndex(index)}
+                  aria-label={`Pilih background ${index + 1}`}
+                  className={[
+                    "h-2.5 rounded-full transition-all",
+                    index === activeImageIndex
+                      ? "w-10 bg-[#F5C451]"
+                      : "w-2.5 bg-white/35",
+                  ].join(" ")}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="relative">
@@ -68,7 +220,7 @@ export default function HomePage() {
                       Ringkasan Hari Ini
                     </p>
                     <h2 className="text-2xl font-black text-[#0B2D4D]">
-                      Dashboard Kota
+                      Data Sistem LATAH
                     </h2>
                   </div>
 
@@ -77,20 +229,32 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  {landingStatsFallback.map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-3xl border border-slate-100 bg-slate-50 p-4"
-                    >
-                      <p className="text-2xl font-black text-[#0B2D4D]">
-                        {item.value}
-                      </p>
-                      <p className="mt-1 text-xs font-medium text-slate-500">
-                        {item.label}
-                      </p>
-                    </div>
-                  ))}
+                <div className="grid gap-4">
+                  {summaryItems.map((item) => {
+                    const Icon = item.icon;
+
+                    return (
+                      <div
+                        key={item.label}
+                        className="rounded-3xl border border-slate-100 bg-slate-50 p-4"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF4D8] text-[#D9543F]">
+                            <Icon className="h-6 w-6" />
+                          </div>
+
+                          <div>
+                            <p className="text-3xl font-black text-[#0B2D4D]">
+                              {item.value}
+                            </p>
+                            <p className="mt-1 text-sm font-bold text-slate-500">
+                              {item.label}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="mt-5 rounded-3xl bg-[#0B2D4D] p-5 text-white">
@@ -98,6 +262,7 @@ export default function HomePage() {
                     <div className="rounded-2xl bg-white/10 p-3">
                       <Bell className="h-5 w-5 text-[#F5C451]" />
                     </div>
+
                     <div>
                       <p className="font-bold">Status laporan transparan</p>
                       <p className="text-sm text-white/70">
@@ -112,7 +277,9 @@ export default function HomePage() {
             <div className="absolute -bottom-6 -left-6 hidden rounded-3xl bg-[#D9543F] p-5 text-white shadow-xl lg:block">
               <Trophy className="mb-3 h-7 w-7 text-[#F5C451]" />
               <p className="text-sm font-bold">Leaderboard Warga Aktif</p>
-              <p className="text-xs text-white/75">Gamifikasi kontribusi publik</p>
+              <p className="text-xs text-white/75">
+                Gamifikasi kontribusi publik
+              </p>
             </div>
           </div>
         </div>
@@ -123,6 +290,7 @@ export default function HomePage() {
           <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#D9543F]">
             Cara Kerja
           </p>
+
           <h2 className="mt-3 font-serif text-4xl font-black text-[#0B2D4D] md:text-5xl">
             Dari laporan warga menjadi tindakan nyata.
           </h2>
@@ -137,7 +305,11 @@ export default function HomePage() {
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF4D8] text-lg font-black text-[#D9543F]">
                 {index + 1}
               </div>
-              <h3 className="text-lg font-black text-[#0B2D4D]">{item.title}</h3>
+
+              <h3 className="text-lg font-black text-[#0B2D4D]">
+                {item.title}
+              </h3>
+
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 {item.description}
               </p>
@@ -161,8 +333,8 @@ export default function HomePage() {
             <Sparkles className="mb-5 h-8 w-8 text-[#D9543F]" />
             <h3 className="text-2xl font-black">AI Classification</h3>
             <p className="mt-3 text-sm leading-6 text-slate-700">
-              Membantu mengklasifikasi laporan dan mendeteksi urgensi berdasarkan
-              judul serta deskripsi.
+              Membantu mengklasifikasi laporan dan mendeteksi urgensi
+              berdasarkan judul serta deskripsi.
             </p>
           </div>
 
@@ -170,8 +342,8 @@ export default function HomePage() {
             <MessageCircle className="mb-5 h-8 w-8 text-[#F5C451]" />
             <h3 className="text-2xl font-black">Civic Interaction</h3>
             <p className="mt-3 text-sm leading-6 text-white/75">
-              Warga dapat memberi dukungan dan komentar pada laporan publik untuk
-              memperkuat prioritas masalah.
+              Warga dapat memberi dukungan dan komentar pada laporan publik
+              untuk memperkuat prioritas masalah.
             </p>
           </div>
         </div>
@@ -189,10 +361,11 @@ export default function HomePage() {
                 Transparansi pelayanan publik dimulai dari laporan yang mudah
                 dipantau.
               </h2>
+
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/70 md:text-base">
-                Dengan sistem tracking, prioritas berbasis data, peta laporan, dan
-                interaksi warga, LATAH dirancang sebagai jembatan antara masyarakat
-                dan pemerintah daerah.
+                Dengan sistem tracking, prioritas berbasis data, peta laporan,
+                dan interaksi warga, LATAH dirancang sebagai jembatan antara
+                masyarakat dan pemerintah daerah.
               </p>
             </div>
           </div>
