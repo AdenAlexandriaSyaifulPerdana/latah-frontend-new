@@ -1,59 +1,41 @@
 "use client";
 
-import { Menu, LogOut } from "lucide-react";
+import { LogOut, ShieldCheck } from "lucide-react";
 
-import { useAuth } from "../../hooks/use-auth";
-import { getInitials } from "../../lib/utils";
+import { LogoutButton } from "./logout-button";
 import type { UserRole } from "../../types/user";
 
 interface DashboardHeaderProps {
   role: UserRole;
-  onOpenSidebar: () => void;
 }
 
-export function DashboardHeader({ role, onOpenSidebar }: DashboardHeaderProps) {
-  const { user, logout } = useAuth();
-
-  const title =
-    role === "admin" ? "Dashboard Admin LATAH" : "Dashboard Citizen LATAH";
+export function DashboardHeader({ role }: DashboardHeaderProps) {
+  const title = role === "admin" ? "Dashboard Admin" : "Dashboard Citizen";
 
   return (
-    <header className="sticky top-0 z-[100] border-b border-slate-100 bg-white/95 backdrop-blur lg:hidden">
-      <div className="flex min-h-[96px] items-center gap-3 px-4 py-4 sm:px-6">
-        <button
-          type="button"
-          onClick={onOpenSidebar}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-[#0B2D4D] shadow-sm transition active:scale-95"
-          aria-label="Buka menu dashboard"
-        >
-          <Menu className="h-7 w-7" />
-        </button>
-
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold leading-5 text-slate-500">
-            Selamat datang kembali
-          </p>
-          <h1 className="mt-1 text-2xl font-black leading-tight text-[#0B2D4D] sm:text-3xl">
-            {title}
-          </h1>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="hidden h-14 min-w-14 items-center justify-center rounded-2xl border border-slate-100 bg-white px-4 text-sm font-black text-[#D9543F] shadow-sm min-[390px]:flex">
-            <span className="rounded-full bg-[#FFF4D8] px-3 py-2">
-              {getInitials(user?.name)}
-            </span>
+    <header className="sticky top-0 z-[120] border-b border-white/10 bg-[#0B2D4D] text-white shadow-sm lg:hidden">
+      <div className="flex min-h-[92px] items-center justify-between gap-4 px-5 py-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.4rem] bg-[#F5C451] text-[#0B2D4D] shadow-lg">
+            <ShieldCheck className="h-9 w-9" />
           </div>
 
-          <button
-            type="button"
-            onClick={logout}
-            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D9543F] text-white shadow-sm transition active:scale-95"
-            aria-label="Keluar"
-          >
-            <LogOut className="h-6 w-6" />
-          </button>
+          <div className="min-w-0">
+            <h1 className="truncate text-2xl font-black leading-tight text-white">
+              {title}
+            </h1>
+            <p className="mt-1 truncate text-sm font-semibold text-white/65">
+              Lapor Pemerintah
+            </p>
+          </div>
         </div>
+
+        <LogoutButton
+          ariaLabel="Logout"
+          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.4rem] border border-white/15 bg-white/10 text-white transition active:scale-95"
+        >
+          <LogOut className="h-8 w-8" />
+        </LogoutButton>
       </div>
     </header>
   );
