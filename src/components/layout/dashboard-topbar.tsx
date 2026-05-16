@@ -18,7 +18,7 @@ export function DashboardTopbar({ role }: DashboardTopbarProps) {
     role === "admin" ? "Dashboard Admin LATAH" : "Dashboard Citizen LATAH";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/90 px-5 py-4 backdrop-blur lg:px-8">
+    <header className="sticky top-0 z-[100] border-b border-slate-100 bg-white/90 px-5 py-4 backdrop-blur lg:px-8">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button

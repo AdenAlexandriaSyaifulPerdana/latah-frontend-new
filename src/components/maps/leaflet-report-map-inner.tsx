@@ -125,7 +125,7 @@ export function LeafletReportMapInner({
           </p>
         </div>
 
-        <div className="h-[620px] w-full">
+        <div className="latah-leaflet-map relative z-0 h-[620px] w-full overflow-hidden">
           <MapContainer
             center={center}
             zoom={13}

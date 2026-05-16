@@ -189,7 +189,7 @@ export function LocationPickerMapInner({
           </button>
         </div>
 
-        <div className="h-[360px] w-full">
+        <div className="latah-leaflet-map relative z-0 h-[360px] w-full overflow-hidden">
           <MapContainer
             center={center}
             zoom={14}

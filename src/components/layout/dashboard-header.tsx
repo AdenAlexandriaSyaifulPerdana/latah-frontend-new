@@ -18,7 +18,7 @@ export function DashboardHeader({ role, onOpenSidebar }: DashboardHeaderProps) {
     role === "admin" ? "Dashboard Admin LATAH" : "Dashboard Citizen LATAH";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur lg:hidden">
+    <header className="sticky top-0 z-[100] border-b border-slate-100 bg-white/95 backdrop-blur lg:hidden">
       <div className="flex min-h-[96px] items-center gap-3 px-4 py-4 sm:px-6">
         <button
           type="button"
