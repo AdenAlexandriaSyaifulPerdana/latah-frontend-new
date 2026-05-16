@@ -26,10 +26,10 @@ import type { ApiResponse } from "../types/api";
 import type { Report } from "../types/report";
 
 const heroImages = [
-  "/images/landing/hero-1.jpg",
-  "/images/landing/hero-2.jpg",
-  "/images/landing/hero-3.jpg",
-  "/images/landing/hero-4.jpg",
+  "/images/landing/hero-1.avif",
+  "/images/landing/hero-2.jpeg",
+  "/images/landing/hero-3.png",
+  "/images/landing/hero-4.webp",
 ];
 
 function extractReports(response: unknown): Report[] {
