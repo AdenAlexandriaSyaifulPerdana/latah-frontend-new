@@ -26,10 +26,10 @@ import type { ApiResponse } from "../types/api";
 import type { Report } from "../types/report";
 
 const heroImages = [
-  "/images/landing/hero-1.avif",
-  "/images/landing/hero-2.jpeg",
-  "/images/landing/hero-3.png",
-  "/images/landing/hero-4.webp",
+  "/images/landing/hero-1.jpg",
+  "/images/landing/hero-2.jpg",
+  "/images/landing/hero-3.jpg",
+  "/images/landing/hero-4.jpg",
 ];
 
 function extractReports(response: unknown): Report[] {
@@ -71,7 +71,6 @@ function getReporterId(report: Report) {
 
 function isHandledReport(report: Report) {
   const status = String(report.status || "").toLowerCase();
-
   return status === "processing" || status === "verified";
 }
 
@@ -157,8 +156,9 @@ export default function HomePage() {
           />
         ))}
 
-        <div className="absolute inset-0 bg-[#0B2D4D]/78" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,196,81,0.35),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(217,84,63,0.28),_transparent_30%)]" />
+        {/* Overlay dibuat lebih tipis supaya background lebih terlihat */}
+        <div className="absolute inset-0 bg-[#0B2D4D]/58" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,196,81,0.22),_transparent_34%),radial-gradient(circle_at_bottom_left,_rgba(217,84,63,0.18),_transparent_32%)]" />
 
         <div className="relative z-10 mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-32 lg:pt-24">
           <div>
@@ -171,7 +171,7 @@ export default function HomePage() {
               Laporkan Masalah Kota, Pantau Tindak Lanjutnya.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/82 md:text-lg">
               LATAH membantu masyarakat Jember menyampaikan laporan secara
               cepat, transparan, dan berbasis data melalui foto, lokasi,
               interaksi warga, serta prioritas penanganan.
@@ -273,16 +273,26 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Card Leaderboard dipindah masuk ke card ringkasan */}
+                <div className="mt-4 rounded-3xl bg-[#D9543F] p-5 text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-2xl bg-[#F5C451]/20 p-3">
+                      <Trophy className="h-5 w-5 text-[#F5C451]" />
+                    </div>
+
+                    <div>
+                      <p className="font-bold">Leaderboard Warga Aktif</p>
+                      <p className="text-sm text-white/80">
+                        Gamifikasi kontribusi publik
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="absolute -bottom-6 -left-6 hidden rounded-3xl bg-[#D9543F] p-5 text-white shadow-xl lg:block">
-              <Trophy className="mb-3 h-7 w-7 text-[#F5C451]" />
-              <p className="text-sm font-bold">Leaderboard Warga Aktif</p>
-              <p className="text-xs text-white/75">
-                Gamifikasi kontribusi publik
-              </p>
-            </div>
+            {/* Card floating lama dihapus */}
           </div>
         </div>
       </section>
