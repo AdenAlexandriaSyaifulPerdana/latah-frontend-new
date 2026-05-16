@@ -27,6 +27,7 @@ export const ROUTES = {
   adminMap: "/admin/map",
   adminUsers: "/admin/users",
   adminAnalytics: "/admin/analytics",
+  adminProfile: "/admin/profile",
 } as const;
 
 export const STORAGE_KEYS = {

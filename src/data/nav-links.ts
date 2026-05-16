@@ -105,4 +105,9 @@ export const adminNavLinks: NavItem[] = [
     href: ROUTES.adminAnalytics,
     icon: ChartColumn,
   },
+  {
+    label: "Profil",
+    href: ROUTES.adminProfile,
+    icon: UserCircle,
+  },
 ];
