@@ -176,10 +176,10 @@ export default function LoginPage() {
               <h1 className="text-3xl font-black text-[#0B2D4D] sm:text-4xl">
                 Masuk ke LATAH
               </h1>
-              <p className="mt-3 text-sm leading-7 text-slate-500">
+              {/* <p className="mt-3 text-sm leading-7 text-slate-500">
                 Gunakan akun citizen atau admin untuk mengakses dashboard sesuai
                 role.
-              </p>
+              </p> */}
             </div>
 
             {/* <div className="mb-6 grid gap-3 sm:grid-cols-2">

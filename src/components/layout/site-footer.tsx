@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, ShieldCheck } from "lucide-react";
+import { Mail, MapPin, PhoneCallIcon, ShieldCheck } from "lucide-react";
 
 import { publicNavLinks } from "../../data/nav-links";
 import { ROUTES } from "../../lib/constants";
@@ -15,7 +15,7 @@ export function SiteFooter() {
             </div>
             <div>
               <p className="text-xl font-black leading-none">LATAH</p>
-              <p className="text-sm text-white/60">Lapor Aspirasi & Tata Kota Jember</p>
+              <p className="text-sm text-white/60">Lapor Pemerintah</p>
             </div>
           </Link>
 
@@ -54,8 +54,8 @@ export function SiteFooter() {
             </div>
 
             <div className="flex gap-3">
-              <Mail className="mt-0.5 h-5 w-5 text-[#F5C451]" />
-              <span>support@latah-jember.id</span>
+              <PhoneCallIcon className="mt-0.5 h-5 w-5 text-[#F5C451]" />
+              <span>0812-1624-4068</span>
             </div>
           </div>
         </div>
