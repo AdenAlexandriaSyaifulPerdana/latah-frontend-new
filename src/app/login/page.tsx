@@ -158,20 +158,14 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-10 rounded-[1.5rem] bg-white p-5 shadow-sm">
-            <p className="text-sm font-black text-[#0B2D4D]">Demo Account</p>
+            <p className="text-sm font-black text-[#0B2D4D]">Demo Akun Admin</p>
 
             <div className="mt-4 space-y-3 text-sm text-slate-600">
-              <div>
-                <p className="font-bold text-slate-900">Citizen</p>
-                <p>rizky@gmail.com</p>
-              </div>
 
               <div>
-                <p className="font-bold text-slate-900">Admin</p>
-                <p>admin@gmail.com</p>
+                <p>Email: admin@gmail.com</p>
+                <p>Password: 12345678</p>
               </div>
-
-              <p className="text-xs text-slate-500">Password demo: 12345678</p>
             </div>
           </div>
         </div>

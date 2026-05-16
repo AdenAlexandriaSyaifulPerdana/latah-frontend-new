@@ -85,7 +85,7 @@ export function LoginForm() {
 
   return (
     <div>
-      <div className="mb-6 grid gap-3 sm:grid-cols-2">
+      {/* <div className="mb-6 grid gap-3 sm:grid-cols-2">
         <button
           type="button"
           onClick={() => fillDemoAccount(citizenDemo)}
@@ -107,7 +107,7 @@ export function LoginForm() {
             Masuk sebagai admin
           </span>
         </button>
-      </div>
+      </div> */}
 
       <form onSubmit={handleSubmit} method="post" className="space-y-5">
         <div>
