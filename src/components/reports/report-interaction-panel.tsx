@@ -169,7 +169,7 @@ export function ReportInteractionPanel({ reportId }: ReportInteractionPanelProps
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h2 className="text-2xl font-black text-[#0B2D4D]">
-            Interaksi Citizen
+            Interaksi Warga
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-500">
             Beri dukungan pada laporan yang penting, simpan laporan, atau

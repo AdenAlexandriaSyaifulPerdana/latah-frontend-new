@@ -5,7 +5,7 @@ import { ROUTES } from "../../lib/constants";
 export default function RegisterPage() {
   return (
     <AuthPageShell
-      title="Daftar Akun Citizen"
+      title="Daftar Akun Warga"
       description="Buat akun warga untuk membuat laporan, memberi komentar, melakukan upvote, dan memantau status laporan."
       footerText="Sudah punya akun?"
       footerLinkText="Masuk sekarang"
