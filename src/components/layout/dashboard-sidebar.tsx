@@ -29,7 +29,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   ).length;
 
   const links = role === "admin" ? adminNavLinks : citizenNavLinks;
-  const roleLabel = role === "admin" ? "Admin LATAH" : "Citizen LATAH";
+  const roleLabel = role === "admin" ? "Admin LATAH" : "Warga LATAH";
 
   function handleMenuClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
     if (pathname === href) return;

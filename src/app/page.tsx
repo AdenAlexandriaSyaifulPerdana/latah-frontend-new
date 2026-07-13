@@ -219,7 +219,7 @@ export default function HomePage() {
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-500">
-                      Ringkasan Hari Ini
+                      Ringkasan Keseluruhan
                     </p>
                     <h2 className="text-2xl font-black text-[#0B2D4D]">
                       Data Sistem LATAH
