@@ -56,7 +56,7 @@ export function AdminMapClient() {
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70">
           Lihat persebaran titik laporan masyarakat berdasarkan koordinat lokasi
-          yang dikirimkan citizen.
+          yang dikirimkan warga.
         </p>
       </section>
 

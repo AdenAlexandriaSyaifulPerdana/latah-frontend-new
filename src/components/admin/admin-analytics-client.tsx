@@ -130,9 +130,9 @@ export function AdminAnalyticsClient() {
               icon={FileText}
             />
             <StatCard
-              title="Citizen Aktif"
+              title="Warga Aktif"
               value={totalCitizens}
-              description="Citizen yang pernah melapor."
+              description="Warga yang pernah melapor."
               icon={ShieldCheck}
             />
             <StatCard

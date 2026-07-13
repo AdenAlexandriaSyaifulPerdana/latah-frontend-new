@@ -86,7 +86,7 @@ export function AdminDashboardClient() {
           icon={Loader2}
         />
         <StatCard
-          title="Citizen Aktif"
+          title="Warga Aktif"
           value={isLoading ? "..." : totalCitizens}
           description="Pengguna yang memiliki laporan."
           icon={Users}

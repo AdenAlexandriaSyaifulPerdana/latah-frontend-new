@@ -90,10 +90,10 @@ export function AdminUsersClient() {
           Admin Users
         </p>
         <h1 className="mt-3 font-serif text-4xl font-black leading-tight md:text-5xl">
-          Pantau citizen aktif.
+          Pantau warga aktif.
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70">
-          Lihat daftar citizen yang pernah membuat laporan beserta ringkasan
+          Lihat daftar warga yang pernah membuat laporan beserta ringkasan
           kontribusinya.
         </p>
       </section>
@@ -101,7 +101,7 @@ export function AdminUsersClient() {
       <section className="grid gap-5 md:grid-cols-3">
         <div className="rounded-[1.75rem] bg-white p-6 shadow-sm">
           <Users className="mb-4 h-7 w-7 text-[#D9543F]" />
-          <p className="text-sm font-semibold text-slate-500">Citizen Aktif</p>
+          <p className="text-sm font-semibold text-slate-500">Warga Aktif</p>
           <h2 className="mt-2 text-3xl font-black text-[#0B2D4D]">
             {isLoading ? "..." : citizens.length}
           </h2>
@@ -134,7 +134,7 @@ export function AdminUsersClient() {
           <input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Cari nama citizen atau ID..."
+            placeholder="Cari nama warga atau ID..."
             className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-4 text-sm outline-none transition focus:border-[#F5C451] focus:ring-4 focus:ring-[#F5C451]/20"
           />
         </div>
@@ -151,11 +151,11 @@ export function AdminUsersClient() {
       {isError ? (
         <EmptyState
           icon={Users}
-          title="Gagal memuat citizen"
+          title="Gagal memuat warga"
           description={
             error instanceof Error
               ? error.message
-              : "Terjadi kesalahan saat mengambil data citizen."
+              : "Terjadi kesalahan saat mengambil data warga."
           }
         />
       ) : null}
@@ -163,8 +163,8 @@ export function AdminUsersClient() {
       {!isLoading && !isError && filteredCitizens.length === 0 ? (
         <EmptyState
           icon={Users}
-          title="Citizen tidak ditemukan"
-          description="Belum ada citizen yang sesuai dengan kata kunci pencarian."
+          title="Warga tidak ditemukan"
+          description="Belum ada warga yang sesuai dengan kata kunci pencarian."
         />
       ) : null}
 
